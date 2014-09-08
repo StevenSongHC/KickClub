@@ -1,0 +1,40 @@
+/*
+	/user/register
+*/
+
+#main {
+	margin: auto;
+	width: 70%;
+}
+#main ul>li a {
+	font-size: 18px;
+	color: #aaa9a9;
+}
+#form-container {
+	margin: auto;
+	margin-top: 35px;
+	width: 70%;
+}
+#form-container .input-group {
+	margin-top: 5px;
+}
+#form-container .input-group span {
+	min-width: 110px;
+}
+#form-container .input-group input {
+	min-width: 270px;
+	max-width: 370px;
+}
+#fill-more {
+	margin-top: 10px;
+}
+#fill-done {
+	margin-top: 20px;
+}
+#alert-box {
+	margin-top: 30px;
+}
+#alert-box div {
+	margin: 0;
+	display: none;
+}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop "
+    xmlns:tx="http://www.springframework.org/schema/tx "
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd  
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">  
+    
+    <!-- 自动扫描 -->
+    <context:component-scan base-package="com.kc"/>  
+    
+    <!-- 开启注解支持 -->
+    <mvc:annotation-driven />
+    
+    <!-- 使用注解方式的事务 -->
+    <!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+    
+    <!-- 自动扫描DAO -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="org.springframework.stereotype.Repository" />
+        <property name="basePackage" value="com.kc.dao" />
+        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    </bean>
+    
+    <!--  配置js,css等静态文件直接映射到对应的文件夹，不被DispatcherServlet处理   -->
+    <mvc:default-servlet-handler/>
+    <!-- <mvc:resources mapping="/images/**" location="classpath:/images/" />
+    <mvc:resources mapping="/js/**" location="classpath:/js/" /> -->
+
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/user/*" />
+            <mvc:exclude-mapping path="/user/register" />
+            <mvc:exclude-mapping path="/user/doRegister" />
+            <mvc:exclude-mapping path="/user/login" />
+            <bean class="com.kc.interceptor.UserInterceptor" />
+        </mvc:interceptor>
+        <!-- <mvc:exclude-mapping path="/user/join" />
+        <mvc:exclude-mapping path="/user/register" />
+        <bean class="com.kc.interceptor.BaseInterceptor" /> -->
+    </mvc:interceptors>
+    
+    <!-- jsp 视图 -->
+    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="contentType" value="text/html; charset=UTF-8" />
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/WEB-INF/VIEW/" />
+        <property name="suffix" value=".jsp" />
+        <property name="order" value="1" />
+    </bean>
+      
+    <!-- freemarker 视图 -->  
+    <bean id="freemarkerViewResolver"  
+        class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"  
+        lazy-init="false">
+        <property name="contentType" value="text/html; charset=UTF-8" />  
+        <property name="exposeSpringMacroHelpers" value="true" />  
+        <property name="requestContextAttribute" value="rc" />  
+        <property name="prefix" value="" />  
+        <property name="suffix" value=".html" />
+		<property name="order" value="0" />
+    </bean>  
+    <bean id="freemarkerConfig"  
+        class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">   
+        <property name="templateLoaderPaths" value="/WEB-INF/views/static" />
+        <property name="freemarkerVariables">
+            <map>  
+                <entry key="xml_escape" value-ref="fmXmlEscape" />  
+                <entry key="html_escape" value-ref="fmHtmlEscape" />  
+            </map>  
+        </property>  
+        <property name="freemarkerSettings">  
+            <props>  
+                <prop key="tag_syntax">auto_detect</prop>  
+                <prop key="template_update_delay">0</prop>  
+                <prop key="defaultEncoding">UTF-8</prop>  
+                <prop key="url_escaping_charset">UTF-8</prop>  
+                <prop key="locale">zh_CN</prop>  
+                <prop key="boolean_format">true,false</prop>  
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>  
+                <prop key="date_format">yyyy-MM-dd</prop>  
+                <prop key="time_format">HH:mm:ss</prop>  
+                <prop key="number_format">0.##</prop>  
+                <prop key="whitespace_stripping">true</prop>  
+                <prop key="classic_compatible">true</prop>  
+            </props>  
+        </property>  
+        <property name="defaultEncoding" value="utf-8" />  
+    </bean>
+    <bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape" />  
+    <bean id="fmHtmlEscape" class="freemarker.template.utility.HtmlEscape" />
+    
+</beans>
