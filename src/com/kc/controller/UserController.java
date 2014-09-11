@@ -5,10 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import com.kc.model.User;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("user")
@@ -38,10 +36,13 @@ public class UserController {
 		return "USER/list";
 	}
 	
-	@RequestMapping(value = "/doRegister", method = RequestMethod.GET)
-	public Map<String, Object> registerUser(@RequestBody User user) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		System.out.println("name ");
+	@RequestMapping(value = "doRegister")
+	@ResponseBody
+	public Map<String, String> registerUser(String email) {
+		Map<String, String> result = new HashMap<String, String>();
+		System.out.println("name is" + email);
+		result.put("msg", "good");
+		result.put("code", "1");
 		return result;
 	}
 	

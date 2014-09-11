@@ -30,7 +30,7 @@
 			<value>root</value>
 		</property>
 		<property name="password">
-			<value>654826249s</value>
+			<value>123456</value>
 		</property>
 		
 		<!-- c3p0 Config -->

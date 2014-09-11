@@ -43,7 +43,7 @@ $(document).ready(function() {
 						if ($("#input-password").val().length != 0) {
 							if ($("#input-password").val().length >= 7) {
 								if ($("#input-password").val() !== "1234567") {
-									if($("#input-repeat-password").val().trim() > 0) {
+									if($("#input-repeat-password").val().trim().length > 0) {
 										if ($("#input-repeat-password").val() === $("#input-password").val()) {
 											submit();
 										}
@@ -129,11 +129,10 @@ $(document).ready(function() {
 			type: "POST",
 			dataType: "JSON",
 			data: {
-				email : $("#input-email").val().trim(),
-				
+				email : $("#input-email").val().trim()
 			}
 		}).done(function( json ) {
-			
+			alert(json.msg);
 		}).fail(function() {
 			alert("FAIL");
 		}).error(function (XMLHttpRequest, textStatus, errorThrown) {
