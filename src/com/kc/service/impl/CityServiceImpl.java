@@ -28,4 +28,8 @@ public class CityServiceImpl implements CityService {
 		return ctDao.getAllCity();
 	}
 
+	public List<City> getCityListByProvinceId(int provinceId) {
+		return ctDao.getCityListByProvinceId(provinceId);
+	}
+
 }

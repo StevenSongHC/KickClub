@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kc.dao.CollegeDAO">  
+	
+    <resultMap type="College" id="collegeResultMap">
+        <id column="id" property="id" />
+        <result column="clg_name" property="name" />
+        <result column="clg_province" property="provinceId" />
+        <result column="clg_city" property="cityId" />
+        <result column="clg_intro" property="intro" />
+    </resultMap>
+    
+    <insert id="insert" parameterType="College" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO college(clg_name,clg_province,clg_city,clg_intro)
+        VALUES (#{name},#{provinceId},#{cityId},#{intro})
+    </insert>
+    
+    <select id="getCollegeById" parameterType="int" resultType="College" resultMap="collegeResultMap">
+            SELECT * FROM college WHERE id=#{id}
+    </select>
+    
+    <select id="getAllCollege" resultType="College" resultMap="collegeResultMap">  
+        <![CDATA[
+            SELECT * FROM college
+        ]]>
+    </select>
+    
+    <select id="getCollegeListByCityId" parameterType="int" resultType="College" resultMap="collegeResultMap">
+            SELECT * FROM college WHERE clg_city=#{cityId}
+    </select>
+    
+</mapper>

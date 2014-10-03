@@ -11,5 +11,7 @@ public interface CityService {
 	public City getCityById(int id);
 	
 	public List<City> getAllCity();
+	
+	public List<City> getCityListByProvinceId(int provinceId);
 
 }

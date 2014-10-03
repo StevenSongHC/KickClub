@@ -17,4 +17,6 @@ public interface CityDAO {
 	
 	public List<City> getAllCity();
 	
+	public List<City> getCityListByProvinceId(int provinceId);
+	
 }

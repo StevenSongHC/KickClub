@@ -3,23 +3,44 @@ package com.kc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kc.model.User;
+import com.kc.service.UserService;
 import com.kc.util.MD5Util;
 
 @Controller
 @RequestMapping("user")
 public class UserController {
+	
+	@Autowired
+	private UserService uService;
 
+	/*
+	 * Default page, also home page for current login user
+	 * 默认用户主页
+	 */
 	@RequestMapping
-	public String hello(ModelMap model) {
-		System.out.println("IN");
-		model.addAttribute("message", "hello there, sucker");
-		return "USER/hello";
+	public String index(ModelMap model) {
+		
+		return "USER/homepage";
+	}
+	
+	/*
+	 * Default page, also home page for current login user
+	 * 默认用户主页
+	 */
+	@RequestMapping("{userName}")
+	public String homepage(ModelMap model,
+						   @PathVariable String userName) {
+		User user = uService.getUserByName(userName);
+		model.addAttribute("user", user);
+		return "USER/homepage";
 	}
 
 	/*
@@ -41,19 +62,40 @@ public class UserController {
 											String name,
 											String password,
 											String senior,
-											String fromProvince,
-											String fromCity,
-											String presentProvince,
-											String presentCity,
-											String college,
+											int fromProvince,
+											int fromCity,
+											int presentProvince,
+											int presentCity,
+											int college,
 											String major) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		System.out.println(senior + " - " + fromProvince + " - " + fromCity + " - " +
 						   presentProvince + " - " + presentCity + " - " +
 						   college + " - " + major);
-		System.out.println("p:" + MD5Util.encryptCode(password));
+		
 		User newbie = new User();
-		result.put("code", 1);
+		newbie.setEmail(email);
+		newbie.setName(name);
+		newbie.setPassword(MD5Util.encryptCode(password));
+		newbie.setSenior(senior);
+		newbie.setFromProvince(fromProvince);
+		newbie.setFromCity(fromCity);
+		newbie.setPresentProvince(presentProvince);
+		newbie.setPresentCity(presentCity);
+		newbie.setCollege(college);
+		newbie.setCollegeMajor(major);
+		
+		java.sql.Date currentDate = new java.sql.Date(new java.util.Date().getTime());
+		newbie.setJoinDate(currentDate);
+		newbie.setLastLoginDate(currentDate);
+		
+		uService.addUser(newbie);
+		
+		if (newbie.getId() != 0)
+			result.put("code", 1);
+		
+		result.put("userName", newbie.getName());
+		
 		return result;
 	}
 

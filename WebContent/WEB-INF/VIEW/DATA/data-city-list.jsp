@@ -17,7 +17,7 @@ $(document).ready(function() {
 	
 	$("#add-data").click(function() {
 		var newId = parseInt($("#content-list tr:last td:first").html()) + 1;
-		var newInput = "<tr><td>" + newId + "</td><td><input type='text'></td><td>" + $("#province-selector").html() + "</td></tr>";
+		var newInput = "<tr><td>" + newId + "</td><td><input type='text'></td><td>" + $("#province-select").html() + "</td></tr>";
 		createNewInput(newInput);
 	});
 	
@@ -56,47 +56,9 @@ $(document).ready(function() {
 		</div>
 	</div>
 	
-	<button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Show Dialog</button>
-	
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header" style="background-color: #f2dede;">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">Title</h4>
-				</div>
-				<div class="modal-body">
-					<p>
-						Body
-					</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal"  aria-hidden="true">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="modal fade" id="a">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        <p>One fine body…</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-	
-<div id="province-selector" style="display: none;">
+<div id="province-select" style="display: none;">
 <select>
+	<option></option>
 <c:forEach items="${provinceList}" var="pr">
 	<option value="${pr.id}">${pr.name}</option>
 </c:forEach>

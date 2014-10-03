@@ -26,5 +26,6 @@
         <typeAlias alias="User" type="com.kc.model.User" />
         <typeAlias alias="Province" type="com.kc.model.Province" />
         <typeAlias alias="City" type="com.kc.model.City" />
+        <typeAlias alias="College" type="com.kc.model.College" />
     </typeAliases>
 </configuration>  

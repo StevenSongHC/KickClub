@@ -25,4 +25,8 @@
         ]]>
     </select>
     
+    <select id="getCityListByProvinceId" parameterType="int" resultType="City" resultMap="cityResultMap">
+            SELECT * FROM city WHERE ct_province=#{provinceId}
+    </select>
+    
 </mapper>

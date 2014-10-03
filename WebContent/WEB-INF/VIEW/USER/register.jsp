@@ -11,7 +11,9 @@ String basepath = request.getContextPath();
 <jsp:include page="../include.jsp" flush="true" />
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/user_style/register-page-style.css">
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-dialog.css">
 <script type="text/javascript"	src="<%=basepath%>/js/bootstrap-select.min.js"></script>
+<script type="text/javascript"	src="<%=basepath%>/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("select").selectpicker();
@@ -42,7 +44,7 @@ $(document).ready(function() {
 		if ($("#input-email").val().trim().length > 0) {
 			if (validateEmail()) {
 				if ($("#input-name").val().trim().length > 0) {
-					if ($("#input-name").val().trim().length > 1 && $("#input-name").val().trim().length < 10) {
+					if ($("#input-name").val().trim().length > 1 && $("#input-name").val().trim().length < 20) {
 						if ($("#input-password").val().length != 0) {
 							if ($("#input-password").val().length >= 7) {
 								if ($("#input-password").val() !== "1234567") {
@@ -97,17 +99,34 @@ $(document).ready(function() {
 		bind selector click event
 	*/
 	$("button[data-id='from-province']").click(function() {
-		if ($("#from-province").val() === null) {
+		if ($("#from-province option:last").val() == 0) {
 			$.ajax( {
 				url: "../ajax/getAllProvinceList",
 				type: "POST",
 				dataType: "JSON",
 			}).done(function( json ) {
-				$("#from-province").append("<option></option>");
 				$.each(json.list, function(i, pr) {
-					$("#from-province").append("<option>" + pr.name + "</option>");
+					$("#from-province").append("<option value='" + pr.id + "'>" + pr.name + "</option>");
 				});
 				$("#from-province").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("button[data-id='present-province']").click(function() {
+		if ($("#present-province option:last").val() == 0) {
+			$.ajax( {
+				url: "../ajax/getAllProvinceList",
+				type: "POST",
+				dataType: "JSON",
+			}).done(function( json ) {
+				$.each(json.list, function(i, pr) {
+					$("#present-province").append("<option value='" + pr.id + "'>" + pr.name + "</option>");
+				});
+				$("#present-province").selectpicker("refresh");
 			}).fail(function() {
 				alert("FAIL");
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
@@ -124,20 +143,68 @@ $(document).ready(function() {
 	$("#from-province").change(function() {
 		if ($(this).val !== null) {
 			$.ajax( {
-				url: "../ajax/getCityListByProvinceName",
+				url: "../ajax/getCityListByProvinceId",
 				type: "POST",
 				dataType: "JSON",
 				data: {
-					provinceName: $(this).val()
+					provinceId: $(this).val()
 				}
 			}).done(function( json ) {
 				$("#from-city").html("");
 				$("#from-city").prop("disabled", false);
-				$("#from-city").append("<option></option>");
+				$("#from-city").append("<option value='0'></option>");
 				$.each(json.list, function(i, ct) {
-					$("#from-city").append("<option>" + ct.name + "</option>");
+					$("#from-city").append("<option value='" + ct.id + "'>" + ct.name + "</option>");
 				});
 				$("#from-city").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("#present-province").change(function() {
+		if ($(this).val !== null) {
+			$.ajax( {
+				url: "../ajax/getCityListByProvinceId",
+				type: "POST",
+				dataType: "JSON",
+				data: {
+					provinceId: $(this).val()
+				}
+			}).done(function( json ) {
+				$("#present-city").html("");
+				$("#present-city").prop("disabled", false);
+				$("#present-city").append("<option value='0'></option>");
+				$.each(json.list, function(i, ct) {
+					$("#present-city").append("<option value='" + ct.id + "'>" + ct.name + "</option>");
+				});
+				$("#present-city").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("#present-city").change(function() {
+		if ($(this).val !== null) {
+			$.ajax( {
+				url: "../ajax/getCollegeListByCityId",
+				type: "POST",
+				dataType: "JSON",
+				data: {
+					cityId: $(this).val()
+				}
+			}).done(function( json ) {
+				$("#college").html("");
+				$("#college").prop("disabled", false);
+				$("#college").append("<option value='0'></option>");
+				$.each(json.list, function(i, clg) {
+					$("#college").append("<option value='" + clg.id + "'>" + clg.name + "</option>");
+				});
+				$("#college").selectpicker("refresh");
 			}).fail(function() {
 				alert("FAIL");
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
@@ -182,8 +249,8 @@ $(document).ready(function() {
 			dataType: "JSON",
 			data: {
 				email : $("#input-email").val().trim(),
-				name : $("#input-email").val(),
-				password : $("#input-email").val(),
+				name : $("#input-name").val(),
+				password : $("#input-password").val(),
 				senior: $("#input-senior").val().trim(),
 				fromProvince : $("#from-province").children("option:selected").val(),
 				fromCity : $("#from-city").children("option:selected").val(),
@@ -193,7 +260,25 @@ $(document).ready(function() {
 				major : $("#input-major").val().trim()
 			}
 		}).done(function( json ) {
-			console.log(json.code);
+			switch (json.code) {
+				case 1 :
+					BootstrapDialog.show({
+						type: BootstrapDialog.TYPE_SUCCESS,
+						closable: false,
+						title: "恭喜你，注册成功！",
+						message: "现转到<a href='../user"+ json.userName + "'>用户个人页</a>，若未能自动打开请点击左边超链接进入"
+					});
+					setTimeout(function() {
+						window.location.href="../user/" + json.userName;
+					}, 3000);
+					break;
+				default:
+					BootstrapDialog.show({
+						type: BootstrapDialog.TYPE_DANGER,
+						title: "注册失败！",
+						message: "请重试"
+					});
+			}
 		}).fail(function() {
 			alert("FAIL");
 		}).error(function (XMLHttpRequest, textStatus, errorThrown) {
@@ -220,7 +305,7 @@ $(document).ready(function() {
 			</div>
 			<div class="input-group">
 				<span class="input-group-addon">昵称</span>
-				<input id="input-name" type="text" class="form-control" placeholder="Nickname（大于1个字符，小于10个字符）">
+				<input id="input-name" type="text" class="form-control" placeholder="Nickname（大于1个字符，小于20个字符）">
 			</div>
 			<div class="input-group">
 				<span class="input-group-addon">密码</span>
@@ -238,17 +323,27 @@ $(document).ready(function() {
 				<input id="input-senior" type="text" class="form-control" placeholder="My Senior High School">
 			</div>
 			<h1><small>省份</small></h1>
-			<select id="from-province" class="selectpicker" title="高中所在省份" data-live-search="true"></select>
+			<select id="from-province" class="selectpicker" title="高中所在省份" data-live-search="true">
+				<option value="0"></option>
+			</select>
 			<h1><small>城市</small></h1>
-			<select id="from-city" class="selectpicker" title="高中所在城市" data-live-search="true" disabled></select>
+			<select id="from-city" class="selectpicker" title="高中所在城市" data-live-search="true" disabled>
+				<option value="0"></option>
+			</select>
 		</div>
 		<div id="present-info-form" style="display: none;">
 			<h1><small>所在省份</small></h1>
-			<select id="present-province" class="selectpicker" title="大学所在省份" data-live-search="true"></select>
+			<select id="present-province" class="selectpicker" title="大学所在省份" data-live-search="true">
+				<option value="0"></option>
+			</select>
 			<h1><small>所在城市</small></h1>
-			<select id="present-city" class="selectpicker" title="大学所在省份" data-live-search="true" disabled></select>
+			<select id="present-city" class="selectpicker" title="大学所在省份" data-live-search="true" disabled>
+				<option value="0"></option>
+			</select>
 			<h1><small>我的大学</small></h1>
-			<select id="college" class="selectpicker" title="大学名称" data-live-search="true" disabled></select>
+			<select id="college" class="selectpicker" title="大学名称" data-live-search="true" disabled>
+				<option value="0"></option>
+			</select>
 			<div class="input-group">
 				<span class="input-group-addon">所学专业</span>
 				<input id="input-major" type="text" class="form-control" placeholder="My Major">

@@ -29,6 +29,19 @@
         <result column="u_account_status" property="accountStatus" />
     </resultMap>
     
+    <insert id="insert" parameterType="User" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO user(u_email,u_password,u_name,u_from_province,u_from_city,u_present_province,u_present_city,u_senior,u_college,u_college_major,u_join_date,u_last_login_date)
+        VALUES (#{email},#{password},#{name},#{fromProvince},#{fromCity},#{presentProvince},#{presentCity},#{senior},#{college},#{collegeMajor},#{joinDate},#{lastLoginDate})
+    </insert>
+    
+    <!-- <select id="getUserById" parameterType="long" resultType="User" resultMap="userResultMap">
+        SELECT * FROM user WHERE id=#{id}
+    </select> -->
+    
+    <select id="getUserByName" parameterType="String" resultType="User" resultMap="userResultMap">
+        SELECT * FROM user WHERE u_name=#{name}
+    </select>
+    
     <select id="getUserList" parameterType="String" resultType="User" resultMap="userResultMap">  
         <![CDATA[
             SELECT * FROM user

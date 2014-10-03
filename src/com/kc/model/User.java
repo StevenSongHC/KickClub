@@ -1,7 +1,5 @@
 package com.kc.model;
 
-import java.sql.Date;
-
 public class User {
 	
 	private long id;					// 主键id
@@ -10,7 +8,7 @@ public class User {
 	private String name;				// 昵称，用户名
 	private String photo;				// 头像
 	private int sex;					// 性别
-	private Date birth;					// 出生日期
+	private java.sql.Date birth;					// 出生日期
 	private String intro;				// 个人简介
 	private String website;				// 个人网站
 	private String interest;			// 兴趣爱好
@@ -21,9 +19,9 @@ public class User {
 	private String senior;				// 曾经就读的高中
 	private int college;				// 现就读的大学
 	private String collegeMajor;		// 大学所学专业
-	private Date joinCollegeDate;		// 入学日期
-	private Date joinDate;				// 注册该账号日期
-	private Date lastLoginDate;			// 最后的登陆日期
+	private java.sql.Date joinCollegeDate;		// 入学日期
+	private java.sql.Date joinDate;				// 注册该账号日期
+	private java.sql.Date lastLoginDate;			// 最后的登陆日期
 	private int online;					// 是否在线
 	private int accountStatus;			// 账号使用状态
 	public long getId() {
@@ -62,10 +60,10 @@ public class User {
 	public void setSex(int sex) {
 		this.sex = sex;
 	}
-	public Date getBirth() {
+	public java.sql.Date getBirth() {
 		return birth;
 	}
-	public void setBirth(Date birth) {
+	public void setBirth(java.sql.Date birth) {
 		this.birth = birth;
 	}
 	public String getIntro() {
@@ -128,22 +126,22 @@ public class User {
 	public void setCollegeMajor(String collegeMajor) {
 		this.collegeMajor = collegeMajor;
 	}
-	public Date getJoinCollegeDate() {
+	public java.sql.Date getJoinCollegeDate() {
 		return joinCollegeDate;
 	}
-	public void setJoinCollegeDate(Date joinCollegeDate) {
+	public void setJoinCollegeDate(java.sql.Date joinCollegeDate) {
 		this.joinCollegeDate = joinCollegeDate;
 	}
-	public Date getJoinDate() {
+	public java.sql.Date getJoinDate() {
 		return joinDate;
 	}
-	public void setJoinDate(Date joinDate) {
+	public void setJoinDate(java.sql.Date joinDate) {
 		this.joinDate = joinDate;
 	}
-	public Date getLastLoginDate() {
+	public java.sql.Date getLastLoginDate() {
 		return lastLoginDate;
 	}
-	public void setLastLoginDate(Date lastLoginDate) {
+	public void setLastLoginDate(java.sql.Date lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
 	}
 	public int getOnline() {

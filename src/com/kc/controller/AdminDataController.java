@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kc.dto.CityDTO;
+import com.kc.dto.CollegeDTO;
 import com.kc.model.City;
+import com.kc.model.College;
 import com.kc.model.Province;
 import com.kc.service.CityService;
+import com.kc.service.CollegeService;
 import com.kc.service.ProvinceService;
 import com.kc.service.UserService;
 
@@ -34,6 +37,8 @@ public class AdminDataController {
 	private ProvinceService prService;
 	@Autowired
 	private CityService ctService;
+	@Autowired
+	private CollegeService clgService;
 	
 	/*
 	 * Redirect to data navigation page
@@ -75,9 +80,31 @@ public class AdminDataController {
 			cityViewList.add(cityView);
 		}
 		model.addAttribute("cityList", cityViewList);
-		// Add hidden selector element
+		// Add hidden select element
 		model.addAttribute("provinceList", prService.getAllProvince());
 		return "DATA/data-city-list";
+	}
+	
+	/*
+	 * Link to college data page
+	 */
+	@RequestMapping("college")
+	public String collegeDataPage(ModelMap model) {
+		List<CollegeDTO> collegeViewList = new ArrayList<CollegeDTO>();
+		List<College> collegeDataList = clgService.getAllCollege();
+		for (College college : collegeDataList) {
+			// Raw data
+			CollegeDTO collegeView = new CollegeDTO(college.getId(), college.getName(), college.getIntro());
+			// Data for view
+			collegeView.setProvince(prService.getProvinceById(college.getProvinceId()).getName());
+			collegeView.setCity(ctService.getCityById(college.getCityId()).getName());
+			
+			collegeViewList.add(collegeView);
+		}
+		model.addAttribute("collegeList", collegeViewList);
+		// Add hidden select element
+		model.addAttribute("provinceList", prService.getAllProvince());
+		return "DATA/data-college-list";
 	}
 	
 	/*
@@ -114,6 +141,27 @@ public class AdminDataController {
 		ctService.addCity(city);
 		
 		result.put("maxId", city.getId());
+		return result;
+	}
+	
+	/*
+	 * Insert a city data
+	 */
+	@RequestMapping(value = "insert/college")
+	@ResponseBody
+	public Map<String, Object> insertCollege(String jsonDataAttr) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		JSONObject attr = JSONObject.fromObject(jsonDataAttr);
+		
+		College college = new College();
+		college.setName(attr.getString("collegeName"));
+		college.setProvinceId(attr.getInt("provinceId"));
+		college.setCityId(attr.getInt("cityId"));
+		college.setIntro(attr.getString("collegeIntro"));
+		clgService.addCollege(college);
+		
+		result.put("maxId", college.getId());
 		return result;
 	}
 	

@@ -11,6 +11,10 @@ import com.kc.model.User;
 @Transactional
 public interface UserDAO {
 	
+	public long insert(User user);
+	
+	public User getUserByName(String name);
+	
 	public List<User> getUserList();
 	
 	// return last uid
