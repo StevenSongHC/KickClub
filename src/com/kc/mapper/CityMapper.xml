@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kc.dao.CityDAO">  
+	
+    <resultMap type="City" id="cityResultMap">
+        <id column="id" property="id" />
+        <result column="ct_name" property="name" />
+        <result column="ct_province" property="provinceId" />
+    </resultMap>
+    
+    <insert id="insert" parameterType="City" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO city(ct_name,ct_province)
+        VALUES (#{name},#{provinceId})
+    </insert>
+    
+    <select id="getCityById" parameterType="int" resultType="City" resultMap="cityResultMap">
+            SELECT * FROM city WHERE id=#{id}
+    </select>
+    
+    <select id="getAllCity" resultType="City" resultMap="cityResultMap">  
+        <![CDATA[
+            SELECT * FROM city
+        ]]>
+    </select>
+    
+</mapper>

@@ -58,6 +58,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 	
+    <tx:annotation-driven transaction-manager="transactionManager" />
     <!-- Spring Advice -->
     <!-- <tx:advice id="txAdvice" transaction-manager="transactionManager">  
         <tx:attributes>

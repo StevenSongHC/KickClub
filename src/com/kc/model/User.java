@@ -3,6 +3,7 @@ package com.kc.model;
 import java.sql.Date;
 
 public class User {
+	
 	private long id;					// 主键id
 	private String email;				// 登陆用的email
 	private String password;			// 密码
@@ -157,4 +158,5 @@ public class User {
 	public void setAccountStatus(int accountStatus) {
 		this.accountStatus = accountStatus;
 	}
+	
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kc.dao.ProvinceDAO">  
+	
+    <resultMap type="Province" id="provinceResultMap">
+        <id column="id" property="id" />
+        <result column="pr_name" property="name" />
+    </resultMap>
+    
+    <insert id="insert" parameterType="Province" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO province(pr_name)
+        VALUES (#{name})
+    </insert>
+    
+    <select id="getProvinceById" parameterType="int" resultType="Province" resultMap="provinceResultMap">
+            SELECT * FROM province WHERE id=#{id}
+    </select>
+    
+    <select id="getAllProvince" resultType="Province" resultMap="provinceResultMap">  
+        <![CDATA[
+            SELECT * FROM province
+        ]]>
+    </select>
+    
+</mapper>

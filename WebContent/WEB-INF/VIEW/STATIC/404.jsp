@@ -4,13 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<jsp:include page="include.jsp" flush="true" />
-<title>KC.com</title>
+<title>404 page not found</title>
 </head>
 <body>
-Let's <a href="about">kick</a> the club
-<div><a href="user/login">用户登录</a></div>
-<div><a href="user/register">新用户注册</a></div>
-<div><a href="data">数据操作</a></div>
+<h1>404 page not found</h1>
 </body>
 </html>

@@ -4,13 +4,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<jsp:include page="include.jsp" flush="true" />
-<title>KC.com</title>
+<jsp:include page="../include.jsp" flush="true" />
+<title>数据操作</title>
 </head>
 <body>
-Let's <a href="about">kick</a> the club
-<div><a href="user/login">用户登录</a></div>
-<div><a href="user/register">新用户注册</a></div>
-<div><a href="data">数据操作</a></div>
+<h4><a href="data/user">用户数据</a> ()条记录</h4>
+<h4><a href="data/province">省份数据</a> ()条记录</h4>
+<h4><a href="data/city">城市数据</a> ()条记录</h4>
 </body>
 </html>
