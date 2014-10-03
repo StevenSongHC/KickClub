@@ -43,7 +43,7 @@ $(document).ready(function() {
 		<tr>
 			<td>${ct.id}</td>
 			<td>${ct.name}</td>
-			<td>${ct.provinceId}</td>
+			<td>${ct.province}</td>
 		</tr>
 	</c:forEach>
 	</table>

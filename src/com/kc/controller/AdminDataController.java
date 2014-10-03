@@ -1,6 +1,8 @@
 package com.kc.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.json.JSONObject;
@@ -11,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kc.dto.CityDTO;
 import com.kc.model.City;
 import com.kc.model.Province;
 import com.kc.service.CityService;
@@ -64,7 +67,15 @@ public class AdminDataController {
 	 */
 	@RequestMapping("city")
 	public String cityDataPage(ModelMap model) {
-		model.addAttribute("cityList", ctService.getAllCity());
+		List<CityDTO> cityViewList = new ArrayList<CityDTO>();
+		List<City> cityDataList = ctService.getAllCity();
+		for (City city :cityDataList) {
+			CityDTO cityView = new CityDTO(city.getId(), city.getName());
+			cityView.setProvince(prService.getProvinceById(city.getProvinceId()).getName());
+			cityViewList.add(cityView);
+		}
+		model.addAttribute("cityList", cityViewList);
+		// Add hidden selector element
 		model.addAttribute("provinceList", prService.getAllProvince());
 		return "DATA/data-city-list";
 	}

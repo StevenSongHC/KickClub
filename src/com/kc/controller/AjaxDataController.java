@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kc.dto.CityDTO;
+import com.kc.model.City;
 import com.kc.service.CityService;
 import com.kc.service.ProvinceService;
 import com.kc.service.UserService;
@@ -39,10 +41,17 @@ public class AjaxDataController {
 		System.out.println("fetchEntityJSONDataById");
 		Map<String, Object> data = new HashMap<String, Object>();
 		
-		if (entityName.equals("province"))
+		if (entityName.equals("province")) {
 			data.put("data", JSONObject.fromObject(prService.getProvinceById(id)));
-		else if (entityName.equals("city"))
-			data.put("data", JSONObject.fromObject(ctService.getCityById(id)));
+		}
+		else if (entityName.equals("city")) {
+			City city = ctService.getCityById(id);
+			// Combine city view data
+			CityDTO cityView = new CityDTO(city.getId(), city.getName());
+			cityView.setProvince(prService.getProvinceById(city.getProvinceId()).getName());
+			// Transform to Ajax data
+			data.put("data", JSONObject.fromObject(cityView));
+		}
 		
 		return data;
 	}
