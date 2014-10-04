@@ -3,18 +3,22 @@ package com.kc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.kc.model.User;
 import com.kc.service.UserService;
 import com.kc.util.MD5Util;
 
 @Controller
+@SessionAttributes("USER_SESSION")
 @RequestMapping("user")
 public class UserController {
 	
@@ -37,9 +41,14 @@ public class UserController {
 	 */
 	@RequestMapping("{userName}")
 	public String homepage(ModelMap model,
-						   @PathVariable String userName) {
+						   @PathVariable String userName,
+						   HttpSession session) {
 		User user = uService.getUserByName(userName);
 		model.addAttribute("user", user);
+		
+		User logger = (User) session.getAttribute("USER_SESSION");
+		System.out.println("logger:" + logger.getName());
+		
 		return "USER/homepage";
 	}
 
@@ -58,7 +67,8 @@ public class UserController {
 	 */
 	@RequestMapping(value = "register/do")
 	@ResponseBody
-	public Map<String, Object> registerUser(String email,
+	public Map<String, Object> registerUser(ModelMap model,
+											String email,
 											String name,
 											String password,
 											String senior,
@@ -94,14 +104,26 @@ public class UserController {
 		if (newbie.getId() != 0)
 			result.put("code", 1);
 		
+		model.addAttribute("USER_SESSION", newbie);
+		
 		result.put("userName", newbie.getName());
 		
 		return result;
 	}
-
+	
 	@RequestMapping("login")
 	public String login(ModelMap model) {
 		return "USER/login";
+	}
+
+	@RequestMapping("login/do")
+	@ResponseBody
+	public Map<String, Object> loginUser(ModelMap model,
+							String email,
+							String password) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		System.out.println("login: " + email + "  " + password);
+		return result;
 	}
 	
 	@RequestMapping("list")

@@ -32,7 +32,7 @@ $(document).ready(function() {
 <body>
 <h1>PROVINCE DATA</h1>
 <div id="main">
-	<table id="content-list" border="1">
+	<table id="content-list" class="table table-hover">
 		<tr>
 			<td width="30%">id</td>
 			<td width="70%">name</td>

@@ -11,9 +11,9 @@ String basepath = request.getContextPath();
 <title>数据操作</title>
 </head>
 <body>
-<h4><a href="<%=basepath%>/data/user">用户数据</a> ()条记录</h4>
-<h4><a href="<%=basepath%>/data/province">省份数据</a> ()条记录</h4>
-<h4><a href="<%=basepath%>/data/city">城市数据</a> ()条记录</h4>
-<h4><a href="<%=basepath%>/data/college">大学数据</a> ()条记录</h4>
+<div class="panel-body"><a href="<%=basepath%>/data/user">用户数据</a> ()条记录</div>
+<div class="panel-body"><a href="<%=basepath%>/data/province">省份数据</a> ()条记录</div>
+<div class="panel-body"><a href="<%=basepath%>/data/city">城市数据</a> ()条记录</div>
+<div class="panel-body"><a href="<%=basepath%>/data/college">大学数据</a> ()条记录</div>
 </body>
 </html>

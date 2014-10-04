@@ -60,7 +60,7 @@ $(document).ready(function() {
 <body>
 <h1>COLLEGE DATA</h1>
 <div id="main">
-	<table id="content-list" border="1">
+	<table id="content-list" class="table table-hover">
 		<tr>
 			<td width="10">id</td>
 			<td width="30%">name</td>

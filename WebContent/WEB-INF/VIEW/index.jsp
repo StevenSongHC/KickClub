@@ -12,8 +12,8 @@ String basepath = request.getContextPath();
 </head>
 <body>
 Let's <a href="about">kick</a> the club
-<div><a href="<%=basepath%>/user/login" target="_blink">用户登录</a></div>
-<div><a href="<%=basepath%>/user/register" target="_blink">新用户注册</a></div>
-<div><a href="<%=basepath%>/data" target="_blink">数据操作</a></div>
+<div class="well"><a href="<%=basepath%>/user/login" target="_blink">用户登录</a></div>
+<div class="well"><a href="<%=basepath%>/user/register" target="_blink">新用户注册</a></div>
+<div class="well"><a href="<%=basepath%>/data" target="_blink">数据操作</a></div>
 </body>
 </html>
