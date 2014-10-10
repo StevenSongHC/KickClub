@@ -30,8 +30,15 @@ public class UserController {
 	 * 默认用户主页
 	 */
 	@RequestMapping
-	public String index(ModelMap model) {
+	public String index(ModelMap model,
+						HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
 		
+		// no login
+		if (currentUser == null)
+			return "redirect:user/login";
+		// login
+		model.put("user", currentUser);
 		return "USER/homepage";
 	}
 	
@@ -41,19 +48,18 @@ public class UserController {
 	 */
 	@RequestMapping("{userName}")
 	public String homepage(ModelMap model,
-						   @PathVariable String userName,
-						   HttpSession session) {
+						   @PathVariable String userName) {
 		User user = uService.getUserByName(userName);
+		
+		if (user == null)
+			return "STATIC/404";
+		
 		model.addAttribute("user", user);
-		
-		User logger = (User) session.getAttribute("USER_SESSION");
-		System.out.println("logger:" + logger.getName());
-		
 		return "USER/homepage";
 	}
 
 	/*
-	 * redirect to register page
+	 * Go to register page
 	 * 转到注册页面
 	 */
 	@RequestMapping("register")
@@ -62,7 +68,7 @@ public class UserController {
 	}
 	
 	/*
-	 * try to register a new user, and return the result
+	 * Try to register a new user, and return the result
 	 * 尝试注册新用户，并返回结果
 	 */
 	@RequestMapping(value = "register/do")
@@ -79,9 +85,6 @@ public class UserController {
 											int college,
 											String major) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		System.out.println(senior + " - " + fromProvince + " - " + fromCity + " - " +
-						   presentProvince + " - " + presentCity + " - " +
-						   college + " - " + major);
 		
 		User newbie = new User();
 		newbie.setEmail(email);
@@ -119,17 +122,27 @@ public class UserController {
 	@RequestMapping("login/do")
 	@ResponseBody
 	public Map<String, Object> loginUser(ModelMap model,
-							String email,
-							String password) {
+										 String email,
+										 String password,
+										 HttpSession session) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		System.out.println("login: " + email + "  " + password);
+		
+		User loginUser = uService.getUserByEmail(email);
+		
+		if (loginUser == null)														// not such user existed
+			result.put("statusCode", 0);
+		else if (!MD5Util.authenticateCode(loginUser.getPassword(), password))		// fail to valid the password
+			result.put("statusCode", -1);
+		else {																		// login succeed
+			result.put("statusCode", 1);
+			model.addAttribute("USER_SESSION", loginUser);
+		}
+		
 		return result;
 	}
 	
 	@RequestMapping("list")
 	public String listUser(ModelMap model) {
-		System.out.println("yeah");
-		
 		return "USER/list";
 	}
 	

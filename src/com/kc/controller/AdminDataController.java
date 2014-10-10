@@ -41,7 +41,7 @@ public class AdminDataController {
 	private CollegeService clgService;
 	
 	/*
-	 * Redirect to data navigation page
+	 * Link to data navigation page
 	 * 转到数据导航页
 	 */
 	@RequestMapping

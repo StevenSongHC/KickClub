@@ -8,11 +8,16 @@ String basepath = request.getContextPath();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <jsp:include page="include.jsp" flush="true" />
+<script type="text/javascript">
+$(document).ready(function() {
+	
+});
+</script>
 <title>KC.com</title>
 </head>
 <body>
 Let's <a href="about">kick</a> the club
-<div class="well"><a href="<%=basepath%>/user/login" target="_blink">用户登录</a></div>
+<div class="well"><a href="<%=basepath%>/user/login">用户登录</a></div>
 <div class="well"><a href="<%=basepath%>/user/register" target="_blink">新用户注册</a></div>
 <div class="well"><a href="<%=basepath%>/data" target="_blink">数据操作</a></div>
 </body>

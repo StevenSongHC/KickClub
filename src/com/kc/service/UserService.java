@@ -7,5 +7,7 @@ public interface UserService {
 	public long addUser(User user);
 	
 	public User getUserByName(String name);
+	
+	public User getUserByEmail(String email);
 
 }

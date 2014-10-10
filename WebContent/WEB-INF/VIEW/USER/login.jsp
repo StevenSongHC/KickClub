@@ -9,49 +9,74 @@ String basepath = request.getContextPath();
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>请登录</title>
 <jsp:include page="../include.jsp" flush="true" />
-<link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-dialog.css">
+<style type="text/css">
+#alert-box div {
+	display: none;
+	margin: auto;
+	width: 50%;
+}
+</style>
 <script type="text/javascript"	src="<%=basepath%>/js/bootstrap-dialog.min.js"></script>
+<script type="text/javascript"	src="<%=basepath%>/js/jquery.form.min.js"></script>
 <script type="text/javascript">
-	function doLogin() {
-		$.ajax( {
-			url: "login/do",
-			type: "POST",
-			dataType: "JSON",
-			data: {
-				email: $("#login-email").val(),
-				password: $("#login-password").val()
-			}
-		}).done(function( json ) {
-			BootstrapDialog.show({
-				type: BootstrapDialog.TYPE_PRIMARY,
-				title: "Yes",
-				message: "Done"
-			});
-		}).fail(function() {
-			BootstrapDialog.show({
-				type: BootstrapDialog.TYPE_DANGER,
-				title: "出错",
-				message: "请重试"
-			});
-		}).error(function (XMLHttpRequest, textStatus, errorThrown) {
-			$("body").append(XMLHttpRequest.responseText);
-		});
-	}
+$(document).ready(function() {
+	
+	$("#login-form").submit(function() {
+		var options = {
+				url: "login/do",
+				beforeSubmit: function() {
+					$("#alert-box>div").hide();
+					if ($("#login-form #email").val() == "") {
+						$("#empty-email").show();
+						$("#login-form #email").focus();
+						return false;
+					}
+					else if ($("#login-form #password").val() == "") {
+						$("#empty-password").show();
+						$("#login-form #password").focus();
+						return false;
+					}
+					return true;
+				},
+				success: function( json ) {
+					switch(json.statusCode) {
+						case -1 :
+							$("#wrong-password").show();
+							$("#login-form #password").val("").focus();
+							break;
+						case 0:
+							$("#non-exist-user").show();
+							$("#login-form #email").focus();
+							break;
+						case 1:
+							window.location.href = document.referrer;
+							break;
+						default:
+							$("#error").show();
+					}
+				}
+			};
+		$("#login-form").ajaxSubmit(options);
+		return false;
+	});
+	
+});
 </script>
 </head>
 <body>
 <div style="width: 50%;margin: auto;margin-top: 20px">
-	<form class="form-horizontal" role="form">
+	<form id="login-form" class="form-horizontal">
 		<div class="form-group">
-			<label for="login-email" class="col-sm-2 control-label">账号</label>
+			<label for="email" class="col-sm-2 control-label">账号</label>
 			<div class="col-sm-10">
-				<input type="text" id="login-email" class="form-control" placeholder="请输入邮箱">
+				<input type="text" id="email" name="email" class="form-control" placeholder="请输入邮箱">
 			</div>
 		</div>
 		<div class="form-group">
-			<label for="login-password" class="col-sm-2 control-label">密码</label>
+			<label for="password" class="col-sm-2 control-label">密码</label>
 			<div class="col-sm-10">
-				<input type="password" id="login-password" class="form-control" placeholder="请输入密码">
+				<input type="password" id="password" name="password" class="form-control" placeholder="请输入密码">
 			</div>
 		</div>
 		<div class="form-group">
@@ -65,10 +90,17 @@ String basepath = request.getContextPath();
 		</div>
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
-				<button class="btn btn-primary" onclick="doLogin()">登陆</button>
+				<button class="btn btn-primary">登陆</button>
 			</div>
 		</div>
 	</form>
+</div>
+<div id="alert-box">
+	<div id="empty-email" class="alert alert-warning" role="alert">账号不能为空</div>
+	<div id="empty-password" class="alert alert-warning" role="alert">密码不能为空</div>
+	<div id="non-exist-user" class="alert alert-warning" role="alert">该用户不存在</div>
+	<div id="wrong-password" class="alert alert-warning" role="alert">密码错误</div>
+	<div id="error" class="alert alert-danger" role="alert">未知错误</div>
 </div>
 </body>
 </html>

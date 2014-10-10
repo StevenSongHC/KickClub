@@ -52,7 +52,6 @@ $(document).ready(function() {
 			<div style="clear:both;"></div>
 		</div>
 	</div>
-
 </div>
 </body>
 </html>
