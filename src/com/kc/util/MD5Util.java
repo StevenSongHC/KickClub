@@ -30,7 +30,7 @@ public class MD5Util {
 	 * authenticate the password
 	 * 验证密码
 	 */
-	public static boolean authenticateCode(String password, String inputStr) {
+	public static boolean authenticateInputPassword(String password, String inputStr) {
 		return password.equals(encryptCode(inputStr));
 	}
 	

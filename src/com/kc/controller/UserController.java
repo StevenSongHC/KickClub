@@ -3,6 +3,9 @@ package com.kc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import com.kc.model.User;
 import com.kc.service.UserService;
+import com.kc.util.CookieUtil;
 import com.kc.util.MD5Util;
 
 @Controller
@@ -34,12 +39,11 @@ public class UserController {
 						HttpSession session) {
 		User currentUser = (User) session.getAttribute("USER_SESSION");
 		
-		// no login
+		// if no login, redirect to login page
 		if (currentUser == null)
 			return "redirect:user/login";
-		// login
-		model.put("user", currentUser);
-		return "USER/homepage";
+		// else redirect to current user's homepage
+		return "redirect:user/" + currentUser.getName();
 	}
 	
 	/*
@@ -114,30 +118,75 @@ public class UserController {
 		return result;
 	}
 	
+	/*
+	 * Go to login page
+	 * 转到登陆界面
+	 */
 	@RequestMapping("login")
-	public String login(ModelMap model) {
-		return "USER/login";
+	public String login(ModelMap model,
+						HttpSession session) {
+		User loginUser = (User) session.getAttribute("USER_SESSION");
+		if (loginUser == null)
+			return "USER/login";
+		else						// redirect login user to the index page
+			return "redirect:../";
 	}
 
+	/*
+	 * Complete login action
+	 * 完成登陆动作，会通过Ajax返回登陆结果
+	 */
 	@RequestMapping("login/do")
 	@ResponseBody
 	public Map<String, Object> loginUser(ModelMap model,
 										 String email,
 										 String password,
-										 HttpSession session) {
+										 boolean rememberme,
+										 HttpSession session,
+										 HttpServletResponse response) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		
 		User loginUser = uService.getUserByEmail(email);
 		
 		if (loginUser == null)														// not such user existed
 			result.put("statusCode", 0);
-		else if (!MD5Util.authenticateCode(loginUser.getPassword(), password))		// fail to valid the password
+		else if (!MD5Util.authenticateInputPassword(loginUser.getPassword(), password))		// fail to valid the password
 			result.put("statusCode", -1);
 		else {																		// login succeed
 			result.put("statusCode", 1);
-			model.addAttribute("USER_SESSION", loginUser);
+			model.addAttribute("USER_SESSION", loginUser);							// add user session
+			if (rememberme)	{														// remember me function on
+				response.addCookie(CookieUtil.generateUserCookie(loginUser));
+			}
 		}
 		
+		return result;
+	}
+	
+	/*
+	 * Logout action
+	 * 用户注销动作
+	 */
+	@RequestMapping("logout")
+	@ResponseBody
+	public Map<String, Object> logoutUser(SessionStatus sessionStatus,
+										  HttpServletRequest request,
+										  HttpServletResponse response) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		sessionStatus.setComplete();					// remove session
+		
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("USER_COOKIE")) {
+					cookie.setValue("");
+					cookie.setMaxAge(0);
+					cookie.setPath("/");
+					response.addCookie(cookie);				// remove cookie
+				}
+			}
+		}
 		return result;
 	}
 	

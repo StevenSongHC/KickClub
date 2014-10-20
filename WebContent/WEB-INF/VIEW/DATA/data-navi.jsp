@@ -11,6 +11,7 @@ String basepath = request.getContextPath();
 <title>数据操作</title>
 </head>
 <body>
+<jsp:include page="../top-float-bar.jsp" flush="true" />
 <div class="panel-body"><a href="<%=basepath%>/data/user">用户数据</a> ()条记录</div>
 <div class="panel-body"><a href="<%=basepath%>/data/province">省份数据</a> ()条记录</div>
 <div class="panel-body"><a href="<%=basepath%>/data/city">城市数据</a> ()条记录</div>

@@ -50,6 +50,7 @@ $(document).ready(function() {
 							$("#login-form #email").focus();
 							break;
 						case 1:
+							console.log(document.referrer);
 							window.location.href = document.referrer;
 							break;
 						default:
@@ -83,7 +84,7 @@ $(document).ready(function() {
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="checkbox">
 					<label>
-						<input type="checkbox">记住我
+						<input name="rememberme" type="checkbox">记住我
 					</label>
 				</div>
 			</div>

@@ -11,9 +11,7 @@ String basepath = request.getContextPath();
 <jsp:include page="../include.jsp" flush="true" />
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/user_style/register-page-style.css">
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-select.min.css">
-<link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-dialog.css">
 <script type="text/javascript"	src="<%=basepath%>/js/bootstrap-select.min.js"></script>
-<script type="text/javascript"	src="<%=basepath%>/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("select").selectpicker();

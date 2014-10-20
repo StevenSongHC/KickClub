@@ -44,6 +44,7 @@
             <mvc:exclude-mapping path="/user/register" />
             <mvc:exclude-mapping path="/user/doRegister" />
             <mvc:exclude-mapping path="/user/login" />
+            <mvc:exclude-mapping path="/user/logout" />
             <bean class="com.kc.interceptor.UserInterceptor" />
         </mvc:interceptor>
         <mvc:interceptor>
@@ -51,8 +52,8 @@
             <bean class="com.kc.interceptor.AdminInterceptor" />
         </mvc:interceptor>
         <!-- <mvc:exclude-mapping path="/user/join" />
-        <mvc:exclude-mapping path="/user/register" />
-        <bean class="com.kc.interceptor.BaseInterceptor" /> -->
+        <mvc:exclude-mapping path="/user/register" /> -->
+        <bean class="com.kc.interceptor.BaseInterceptor" />
     </mvc:interceptors>
     
     <!-- jsp 视图 -->

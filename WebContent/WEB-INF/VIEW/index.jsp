@@ -10,15 +10,17 @@ String basepath = request.getContextPath();
 <jsp:include page="include.jsp" flush="true" />
 <script type="text/javascript">
 $(document).ready(function() {
-	
+	console.log(document.cookie);
 });
 </script>
 <title>KC.com</title>
 </head>
 <body>
+<jsp:include page="top-float-bar.jsp" flush="true" />
 Let's <a href="about">kick</a> the club
 <div class="well"><a href="<%=basepath%>/user/login">用户登录</a></div>
 <div class="well"><a href="<%=basepath%>/user/register" target="_blink">新用户注册</a></div>
 <div class="well"><a href="<%=basepath%>/data" target="_blink">数据操作</a></div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><hr>
 </body>
 </html>

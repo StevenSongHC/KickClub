@@ -10,7 +10,6 @@ String basepath = request.getContextPath();
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <jsp:include page="../include.jsp" flush="true" />
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/data_style/data-list-page-style.css">
-<script type="text/javascript"	src="<%=basepath%>/js/bootstrap-dialog.min.js"></script>
 <script type="text/javascript"	src="<%=basepath%>/js/data-list-insert.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
