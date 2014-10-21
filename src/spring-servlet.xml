@@ -78,7 +78,7 @@
     </bean>  
     <bean id="freemarkerConfig"  
         class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">   
-        <property name="templateLoaderPaths" value="/WEB-INF/views/static" />
+        <property name="templateLoaderPaths" value="/WEB-INF/VIEW/STATIC" />
         <property name="freemarkerVariables">
             <map>  
                 <entry key="xml_escape" value-ref="fmXmlEscape" />  

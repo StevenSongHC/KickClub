@@ -42,7 +42,7 @@ $(document).ready(function() {
 		BootstrapDialog.show({
 			type: BootstrapDialog.TYPE_INFO,
 			title: "请登录",
-			message: "请重试"
+			message: $("<div></div>").load("<%=basepath%>/getLoginForm")
 		});
 	});
 	// REGISTER

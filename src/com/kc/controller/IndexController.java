@@ -23,8 +23,14 @@ public class IndexController {
 	}
 
 	@RequestMapping("about")
-	public String register(ModelMap model) {
+	public String about(ModelMap model) {
 		return "about";
+	}
+	
+	// For loading login form
+	@RequestMapping("getLoginForm")
+	public String loadLogonForm(ModelMap model) {
+		return "login-form";
 	}
 
 	
