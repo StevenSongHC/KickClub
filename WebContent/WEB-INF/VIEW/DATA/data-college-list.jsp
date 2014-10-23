@@ -71,8 +71,8 @@ $(document).ready(function() {
 		<tr>
 			<td>${clg.id}</td>
 			<td>${clg.name}</td>
-			<td>${clg.province}</td>
-			<td>${clg.city}</td>
+			<td>${clg.province.name}</td>
+			<td>${clg.city.name}</td>
 			<td>${clg.intro}</td>
 		</tr>
 	</c:forEach>

@@ -1,10 +1,12 @@
 package com.kc.dto;
 
+import com.kc.model.Province;
+
 public class CityDTO {
 	
 	private int id;
 	private String name;
-	private String province;
+	private Province province;
 	
 	public CityDTO() {
 		super();
@@ -26,10 +28,10 @@ public class CityDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getProvince() {
+	public Province getProvince() {
 		return province;
 	}
-	public void setProvince(String province) {
+	public void setProvince(Province province) {
 		this.province = province;
 	}
 	

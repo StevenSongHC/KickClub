@@ -76,7 +76,7 @@ public class AdminDataController {
 		List<City> cityDataList = ctService.getAllCity();
 		for (City city :cityDataList) {
 			CityDTO cityView = new CityDTO(city.getId(), city.getName());
-			cityView.setProvince(prService.getProvinceById(city.getProvinceId()).getName());
+			cityView.setProvince(prService.getProvinceById(city.getProvinceId()));
 			cityViewList.add(cityView);
 		}
 		model.addAttribute("cityList", cityViewList);
@@ -96,8 +96,8 @@ public class AdminDataController {
 			// Raw data
 			CollegeDTO collegeView = new CollegeDTO(college.getId(), college.getName(), college.getIntro());
 			// Data for view
-			collegeView.setProvince(prService.getProvinceById(college.getProvinceId()).getName());
-			collegeView.setCity(ctService.getCityById(college.getCityId()).getName());
+			collegeView.setProvince(prService.getProvinceById(college.getProvinceId()));
+			collegeView.setCity(ctService.getCityById(college.getCityId()));
 			
 			collegeViewList.add(collegeView);
 		}

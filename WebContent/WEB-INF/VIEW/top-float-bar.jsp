@@ -13,26 +13,28 @@ body {
 	top: 0;
 	width: 100%;
 	background-color: rgba(153, 153, 153, 0.31);
-	padding: 6px;
 }
 #right-container {
 	float: right;
 }
 #user-bar img {
-	width: 25px;
-	height: 25px;
+	width: 20px;
+	height: 20px;
 }
-#user-bar span {
-	padding: 6px;
+#user-bar div {
+	display: inline-block;
+	margin: 3px;
+	padding: 3px;
 	background-color: #999;
 	border: 1px solid #808080;
 	cursor: pointer;
 	color: #d3d3d3;
 }
 </style>
+<script type="text/javascript"	src="<%=basepath%>/js/bootstrap-hover-dropdown.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#user-bar>span").hover(function() {
+	$("#user-bar>div").hover(function() {
 		$(this).css({"background-color" : "#808080", "border-color" : "#d3d3d3"});
 	}, function() {
 		$(this).css({"background-color" : "#999", "border-color" : "#808080"});
@@ -49,10 +51,6 @@ $(document).ready(function() {
 	$("#user-bar #register").click(function() {
 		window.open("user/register");
 	});
-	// HOMEPAGE
-	$("#user-bar #user-photo").click(function() {
-		window.location.href = "user";
-	});
 	// LOGOUT
 	$("#user-bar #logout").click(function() {
 		$.ajax( {
@@ -66,25 +64,39 @@ $(document).ready(function() {
 			$("body").append(XMLHttpRequest.responseText);
 		});
 	});
+	/* // HOVER
+	$("#user-bar #user-title").hover(function() {
+		$(this).toggleClass("open" ,true);
+	}, function() {
+		$(this).toggleClass("open", false);
+	}); */
 });
 </script>
 <div id="top-bar">
 	<div id="right-container">
 		<div id="user-bar">
-			
-			<c:choose>
-				<c:when test="${empty sessionScope.USER_SESSION}">
-					<span id="login">登陆</span>
-					<span id="register">注册</span>
-				</c:when>
-				<c:otherwise>
-					<span id="user-photo"><img alt="${sessionScope.USER_SESSION.name}的头像" title="前往我的主页" src="${sessionScope.USER_SESSION.photo}"></span>
-					<span id="user-name"><c:out value="${sessionScope.USER_SESSION.name}" /></span>
-					<span><img title="查看我的所有消息" src="images/message.png" /></span>
-					<span id="logout">登出</span>
-				</c:otherwise>
-			</c:choose>
-			<div style="clear: both;"></div>
+		<c:choose>
+			<c:when test="${empty sessionScope.USER_SESSION}">
+				<div id="login">登陆</div>
+				<div id="register">注册</div>
+			</c:when>
+			<c:otherwise>
+				<div id="user-title" class="dropdown">
+					<a href="<%=basepath%>/user"><img alt="${sessionScope.USER_SESSION.name}的头像" title="前往我的主页" src="${sessionScope.USER_SESSION.photo}"></a>
+					<span class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+						<c:out value="${sessionScope.USER_SESSION.name}" />
+						<b class="caret"></b>
+					</span>
+					<ul class="dropdown-menu">
+						<li><a href="#">My Subscription</a></li>
+						<li><a href="#">My Clubs</a></li>
+					</ul>
+				</div>
+				<div><a href="#"><img title="消息" src="images/message.png" /></a></div>
+				<div><a href="#"><img title="设置" src="images/setting.png" /></a></div>
+				<div id="logout">登出</div>
+			</c:otherwise>
+		</c:choose>
 		</div>
 	</div>
 </div>

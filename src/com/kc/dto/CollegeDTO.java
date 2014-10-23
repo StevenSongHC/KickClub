@@ -1,11 +1,14 @@
 package com.kc.dto;
 
+import com.kc.model.City;
+import com.kc.model.Province;
+
 public class CollegeDTO {
 	
 	private int id;
 	private String name;
-	private String province;
-	private String city;
+	private Province province;
+	private City city;
 	private String intro;
 	
 	public CollegeDTO() {
@@ -29,16 +32,16 @@ public class CollegeDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getProvince() {
+	public Province getProvince() {
 		return province;
 	}
-	public void setProvince(String province) {
+	public void setProvince(Province province) {
 		this.province = province;
 	}
-	public String getCity() {
+	public City getCity() {
 		return city;
 	}
-	public void setCity(String city) {
+	public void setCity(City city) {
 		this.city = city;
 	}
 	public String getIntro() {

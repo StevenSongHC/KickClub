@@ -53,11 +53,19 @@ public class AjaxDataController {
 		}
 		else if (entityName.equals("city")) {
 			City city = ctService.getCityById(id);
-			// Combine city view data
+			
+			/*// Combine city view data
 			CityDTO cityView = new CityDTO(city.getId(), city.getName());
 			cityView.setProvince(prService.getProvinceById(city.getProvinceId()).getName());
 			// Transform to Ajax data
-			data.put("data", JSONObject.fromObject(cityView));
+			data.put("data", JSONObject.fromObject(cityView));*/
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("{id:" + id);
+			sb.append(",name:'" + city.getName());
+			sb.append("',province:'" + prService.getProvinceById(city.getProvinceId()).getName() + "'}");
+			
+			data.put("data", JSONObject.fromObject(sb.toString()));
 		}
 		else if (entityName.equals("college")) {
 			College college = clgService.getCollegeById(id);
@@ -68,7 +76,7 @@ public class AjaxDataController {
 			data.put("data", JSONObject.fromObject(collegeView));*/
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append("{id:" +id);
+			sb.append("{id:" + id);
 			sb.append(",name:'" + college.getName());
 			sb.append("',province:'" + prService.getProvinceById(college.getProvinceId()).getName());
 			sb.append("',city:'" + ctService.getCityById(college.getCityId()).getName());
@@ -107,7 +115,7 @@ public class AjaxDataController {
 		
 		for (City city : cityDataList) {
 			CityDTO cityView = new CityDTO(city.getId(), city.getName());
-			cityView.setProvince(prService.getProvinceById(city.getProvinceId()).getName());
+			cityView.setProvince(prService.getProvinceById(city.getProvinceId()));
 			cityViewList.add(cityView);
 		}
 		
@@ -129,8 +137,8 @@ public class AjaxDataController {
 		
 		for (College college : collegeDataList) {
 			CollegeDTO collegeView = new CollegeDTO(college.getId(), college.getName(), college.getIntro());
-			collegeView.setProvince(prService.getProvinceById(college.getProvinceId()).getName());
-			collegeView.setCity(ctService.getCityById(college.getCityId()).getName());
+			collegeView.setProvince(prService.getProvinceById(college.getProvinceId()));
+			collegeView.setCity(ctService.getCityById(college.getCityId()));
 			collegeViewList.add(collegeView);
 		}
 		
