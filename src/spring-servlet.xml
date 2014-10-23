@@ -42,8 +42,9 @@
         <mvc:interceptor>
             <mvc:mapping path="/user/*" />
             <mvc:exclude-mapping path="/user/register" />
-            <mvc:exclude-mapping path="/user/doRegister" />
+            <mvc:exclude-mapping path="/user/register/do" />
             <mvc:exclude-mapping path="/user/login" />
+            <mvc:exclude-mapping path="/user/login/do" />
             <mvc:exclude-mapping path="/user/logout" />
             <bean class="com.kc.interceptor.UserInterceptor" />
         </mvc:interceptor>

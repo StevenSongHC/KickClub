@@ -11,21 +11,22 @@ public class UserInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
 			Object handler) throws Exception {
-		System.out.println("la1");
+		/*if (request.getSession().getAttribute("USER_SESSION") == null)		// validate login status
+			response.sendRedirect("login");			*/						// if not login yet, redirect to the login page
 		return true;
 	}
 	
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response,
 			Object handler, ModelAndView modelAndView) throws Exception {
-		System.out.println("la2");
+		
 	}
 	
 	@Override
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		System.out.println("la3");
+		
 	}
 	
 }

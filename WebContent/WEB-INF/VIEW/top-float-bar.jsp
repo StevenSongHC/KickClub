@@ -93,7 +93,7 @@ $(document).ready(function() {
 					</ul>
 				</div>
 				<div><a href="#"><img title="消息" src="images/message.png" /></a></div>
-				<div><a href="#"><img title="设置" src="images/setting.png" /></a></div>
+				<div><a href="<%=basepath%>/user/setting"><img title="设置" src="images/setting.png" /></a></div>
 				<div id="logout">登出</div>
 			</c:otherwise>
 		</c:choose>

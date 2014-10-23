@@ -3,7 +3,6 @@ package com.kc.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,15 +34,14 @@ public class UserController {
 	 * 默认用户主页
 	 */
 	@RequestMapping
-	public String index(ModelMap model,
-						HttpSession session) {
+	public String index(HttpSession session) {
 		User currentUser = (User) session.getAttribute("USER_SESSION");
 		
 		// if no login, redirect to login page
 		if (currentUser == null)
-			return "redirect:user/login";
+			return "redirect:/user/login";
 		// else redirect to current user's homepage
-		return "redirect:user/" + currentUser.getName();
+		return "redirect:/user/" + currentUser.getName();
 	}
 	
 	/*
@@ -67,7 +65,7 @@ public class UserController {
 	 * 转到注册页面
 	 */
 	@RequestMapping("register")
-	public String register(ModelMap model) {
+	public String register() {
 		return "USER/register";
 	}
 	
@@ -87,8 +85,19 @@ public class UserController {
 											int presentProvince,
 											int presentCity,
 											int college,
-											String major) {
+											String major,
+											SessionStatus sessionStatus,
+											HttpSession session,
+											HttpServletRequest request,
+											HttpServletResponse response) {
 		Map<String, Object> result = new HashMap<String, Object>();
+		
+		// logout first
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+		if (currentUser != null) {
+			sessionStatus.setComplete();
+			CookieUtil.removeCookie(request, response, "USER_COOKIE");
+		}
 		
 		User newbie = new User();
 		newbie.setEmail(email);
@@ -111,7 +120,9 @@ public class UserController {
 		if (newbie.getId() != 0)
 			result.put("code", 1);
 		
+		// login
 		model.addAttribute("USER_SESSION", newbie);
+		response.addCookie(CookieUtil.generateUserCookie(newbie));
 		
 		result.put("userName", newbie.getName());
 		
@@ -123,8 +134,7 @@ public class UserController {
 	 * 转到登陆界面
 	 */
 	@RequestMapping("login")
-	public String login(ModelMap model,
-						HttpSession session) {
+	public String login(HttpSession session) {
 		User loginUser = (User) session.getAttribute("USER_SESSION");
 		if (loginUser == null)
 			return "USER/login";
@@ -174,20 +184,25 @@ public class UserController {
 										  HttpServletResponse response) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		sessionStatus.setComplete();					// remove session
+		sessionStatus.setComplete();									// remove session
+		CookieUtil.removeCookie(request, response, "USER_COOKIE");		// remove cookie
 		
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("USER_COOKIE")) {
-					cookie.setValue("");
-					cookie.setMaxAge(0);
-					cookie.setPath("/");
-					response.addCookie(cookie);				// remove cookie
-				}
-			}
-		}
 		return result;
+	}
+	
+	/*
+	 * Go to user setting page
+	 * 转到用户设置界面
+	 */
+	@RequestMapping("setting")
+	public String setting(HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+	
+		// if no login, redirect to login page
+		if (currentUser == null)
+			return "redirect:/user/login";
+		
+			return "USER/setting";
 	}
 	
 	@RequestMapping("list")
