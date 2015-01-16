@@ -34,9 +34,9 @@
         VALUES (#{email},#{password},#{name},#{fromProvince},#{fromCity},#{presentProvince},#{presentCity},#{senior},#{college},#{collegeMajor},#{joinDate},#{lastLoginDate})
     </insert>
     
-    <!-- <select id="getUserById" parameterType="long" resultType="User" resultMap="userResultMap">
+    <select id="getUserById" parameterType="long" resultType="User" resultMap="userResultMap">
         SELECT * FROM user WHERE id=#{id}
-    </select> -->
+    </select>
     
     <select id="getUserByName" parameterType="String" resultType="User" resultMap="userResultMap">
         SELECT * FROM user WHERE u_name=#{name}
@@ -51,6 +51,31 @@
             SELECT * FROM user
         ]]>
     </select>
+    
+    <update id="update" parameterType="User">
+        UPDATE user SET
+            u_password=#{password},
+            u_name=#{name},
+            u_photo=#{photo},
+            u_sex=#{sex},
+            u_birth=#{birth},
+            u_intro=#{intro},
+            u_website=#{website},
+            u_interest=#{interest},
+            u_from_province=#{fromProvince},
+            u_from_city=#{fromCity},
+            u_present_province=#{presentProvince},
+            u_present_city=#{presentCity},
+            u_senior=#{senior},
+            u_college=#{college},
+            u_college_major=#{collegeMajor},
+            u_join_college_date=#{joinCollegeDate},
+            u_join_date=#{joinDate},
+            u_last_login_date=#{lastLoginDate},
+            u_online=#{online},
+            u_account_status=#{accountStatus}
+        WHERE id=#{id}
+    </update>
     
     <!-- <insert id="addUser" parameterType="User">
         INSERT INTO user(u_name,u_cn_name,u_email,u_password,u_pic)

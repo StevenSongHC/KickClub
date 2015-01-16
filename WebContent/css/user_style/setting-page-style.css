@@ -1,0 +1,47 @@
+/*
+	/user/setting
+*/
+#main {
+	margin: 10px 120px;
+}
+#user-showcase {
+	text-align: center;
+	margin:5px 0;
+}
+#user-photo img {
+	width: 75px;
+	height: 75px;
+}
+#ver-navi-bar {
+	width: 250px;
+	margin:auto;
+}
+#setting-content {
+	width: 600px;
+	float: left;
+}
+#setting-content textarea {
+	width: 100%;
+}
+.list-group-item {
+	padding: 5px 20px;
+	font-size: 13px;
+	color: #8b8b8b;
+}
+#setting-content #sex {
+	width: 50%;
+}
+#setting-content #sex label {
+	width: 33%;
+}
+#setting-content #save {
+	display: block;
+	margin-top: 30px;
+	width: 130px;
+}
+#ver-navi-bar .list-group {
+	display: none;
+}
+.add-on {
+	cursor: pointer;
+}

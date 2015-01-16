@@ -1,29 +1,59 @@
-package com.kc.model;
+package com.kc.dto;
 
-public class User {
+import com.kc.model.City;
+import com.kc.model.College;
+import com.kc.model.Province;
+import com.kc.model.User;
+
+public class UserDTO {
 	
-	private long id;								// 主键id
-	private String email;							// 登陆用的email
-	private String password;						// 密码
-	private String name;							// 昵称，用户名
-	private String photo;							// 头像
-	private int sex;								// 性别
-	private java.sql.Date birth;					// 出生日期
-	private String intro;							// 个人简介
-	private String website;							// 个人网站
-	private String interest;						// 兴趣爱好
-	private int fromProvince;						// 来自的省份
-	private int fromCity;							// 来自的城市
-	private int presentProvince;					// 现居省份
-	private int presentCity;						// 现居城市
-	private String senior;							// 曾经就读的高中
-	private int college;							// 现就读的大学
-	private String collegeMajor;					// 大学所学专业
-	private java.sql.Date joinCollegeDate;			// 入学日期
-	private java.sql.Date joinDate;					// 注册该账号日期
-	private java.sql.Date lastLoginDate;			// 最后的登陆日期
-	private int online;								// 是否在线
-	private int accountStatus;						// 账号使用状态
+	private long id;
+	private String email;
+	private String password;
+	private String name;
+	private String photo;
+	private int sex;
+	private java.sql.Date birth;
+	private String intro;
+	private String website;
+	private String interest;
+	private Province fromProvince;
+	private City fromCity;
+	private Province presentProvince;
+	private City presentCity;
+	private String senior;
+	private College college;
+	private String collegeMajor;
+	private java.sql.Date joinCollegeDate;
+	private java.sql.Date joinDate;
+	private java.sql.Date lastLoginDate;
+	private int online;
+	private int accountStatus;
+	
+	public UserDTO() {
+		super();
+	}
+	public UserDTO(User user) {
+		this.id = user.getId();
+		this.email = user.getEmail();
+		this.password = user.getPassword();
+		this.name = user.getName();
+		this.photo = user.getPhoto();
+		this.sex = user.getSex();
+		this.birth = user.getBirth();
+		this.intro = user.getIntro();
+		this.website = user.getWebsite();
+		this.interest = user.getInterest();
+		this.senior = user.getSenior();
+		this.collegeMajor = user.getCollegeMajor();
+		this.joinCollegeDate = user.getJoinCollegeDate();
+		this.joinDate = user.getJoinDate();
+		this.lastLoginDate = user.getLastLoginDate();
+		this.online = user.getOnline();
+		this.accountStatus = user.getAccountStatus();
+	}
+	
+	
 	public long getId() {
 		return id;
 	}
@@ -84,28 +114,28 @@ public class User {
 	public void setInterest(String interest) {
 		this.interest = interest;
 	}
-	public int getFromProvince() {
+	public Province getFromProvince() {
 		return fromProvince;
 	}
-	public void setFromProvince(int fromProvince) {
+	public void setFromProvince(Province fromProvince) {
 		this.fromProvince = fromProvince;
 	}
-	public int getFromCity() {
+	public City getFromCity() {
 		return fromCity;
 	}
-	public void setFromCity(int fromCity) {
+	public void setFromCity(City fromCity) {
 		this.fromCity = fromCity;
 	}
-	public int getPresentProvince() {
+	public Province getPresentProvince() {
 		return presentProvince;
 	}
-	public void setPresentProvince(int presentProvince) {
+	public void setPresentProvince(Province presentProvince) {
 		this.presentProvince = presentProvince;
 	}
-	public int getPresentCity() {
+	public City getPresentCity() {
 		return presentCity;
 	}
-	public void setPresentCity(int presentCity) {
+	public void setPresentCity(City presentCity) {
 		this.presentCity = presentCity;
 	}
 	public String getSenior() {
@@ -114,10 +144,10 @@ public class User {
 	public void setSenior(String senior) {
 		this.senior = senior;
 	}
-	public int getCollege() {
+	public College getCollege() {
 		return college;
 	}
-	public void setCollege(int college) {
+	public void setCollege(College college) {
 		this.college = college;
 	}
 	public String getCollegeMajor() {

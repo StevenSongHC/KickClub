@@ -13,11 +13,15 @@ public interface UserDAO {
 	
 	public long insert(User user);
 	
+	public User getUserById(long id);
+	
 	public User getUserByName(String name);
 	
 	public User getUserByEmail(String email);
 	
 	public List<User> getUserList();
+	
+	public boolean update(User user);
 	
 	// return last uid
 	/*public int addUser(User user);

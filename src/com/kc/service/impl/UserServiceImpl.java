@@ -16,6 +16,10 @@ public class UserServiceImpl implements UserService {
 	public long addUser(User user) {
 		return uDao.insert(user);
 	}
+	
+	public User getUserById(long id) {
+		return uDao.getUserById(id);
+	}
 
 	public User getUserByName(String name) {
 		return uDao.getUserByName(name);
@@ -23,6 +27,10 @@ public class UserServiceImpl implements UserService {
 
 	public User getUserByEmail(String email) {
 		return uDao.getUserByEmail(email);
+	}
+
+	public boolean updateUser(User user) {
+		return uDao.update(user);
 	}
 
 }

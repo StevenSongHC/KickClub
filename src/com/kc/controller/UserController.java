@@ -1,5 +1,7 @@
 package com.kc.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.kc.model.User;
+import com.kc.service.CityService;
+import com.kc.service.CollegeService;
+import com.kc.service.ProvinceService;
 import com.kc.service.UserService;
 import com.kc.util.CookieUtil;
 import com.kc.util.MD5Util;
@@ -28,6 +34,12 @@ public class UserController {
 	
 	@Autowired
 	private UserService uService;
+	@Autowired
+	private ProvinceService prService;
+	@Autowired
+	private CityService ctService;
+	@Autowired
+	private CollegeService clgService;
 
 	/*
 	 * Default page, also home page for current login user
@@ -164,11 +176,19 @@ public class UserController {
 			result.put("statusCode", -1);
 		else {																		// login succeed
 			result.put("statusCode", 1);
+
+			// update the last login date
+			java.sql.Date currentDate = new java.sql.Date(new java.util.Date().getTime());
+			loginUser.setLastLoginDate(currentDate);
+			uService.updateUser(loginUser);
+			
+			// add session and cookie
 			model.addAttribute("USER_SESSION", loginUser);							// add user session
 			if (rememberme)	{														// remember me function on
 				response.addCookie(CookieUtil.generateUserCookie(loginUser));
 			}
 		}
+		
 		
 		return result;
 	}
@@ -191,18 +211,153 @@ public class UserController {
 	}
 	
 	/*
-	 * Go to user setting page
-	 * 转到用户设置界面
+	 * Profile setting page
 	 */
 	@RequestMapping("setting")
-	public String setting(HttpSession session) {
+	public String setting(ModelMap model,
+						  HttpSession session) {
 		User currentUser = (User) session.getAttribute("USER_SESSION");
 	
 		// if no login, redirect to login page
 		if (currentUser == null)
 			return "redirect:/user/login";
 		
-			return "USER/setting";
+		/*UserDTO userView = new UserDTO(currentUser);
+		userView.setFromProvince(prService.getProvinceById(currentUser.getFromProvince()));
+		userView.setFromCity(ctService.getCityById(currentUser.getFromCity()));
+		userView.setPresentProvince(prService.getProvinceById(currentUser.getPresentProvince()));
+		userView.setPresentCity(ctService.getCityById(currentUser.getPresentCity()));
+		userView.setCollege(clgService.getCollegeById(currentUser.getCollege()));
+		
+		model.addAttribute("user", userView);*/
+		
+		model.addAttribute("user", currentUser);
+		return "USER/setting";
+	}
+	
+	/*
+	 * 先判断更新了那些字段，然后存入数据库，再更新用户session和cookie
+	 */
+	@RequestMapping("setting/save")
+	@ResponseBody
+	public Map<String, Object> updateProfile(HttpSession session,
+											 SessionStatus sessionStatus,
+											 HttpServletRequest request,
+											 HttpServletResponse response,
+											 ModelMap model,
+											 String intro,
+											 String interest,
+											 int sex,
+											 String birth,
+											 String website) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+		Map<String, Object> result = new HashMap<String, Object>();
+		
+		System.out.println("intro: " + intro);
+		System.out.println("interest: " + interest);
+		System.out.println("sex: " + sex);
+		System.out.println("birth: " + birth);
+		System.out.println("website" + website);
+		
+		if (!birth.equals(currentUser.getBirth().toString()) && !birth.equals("")) {
+			// parse birth date string
+			try {
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				java.util.Date date = format.parse(birth);
+				java.sql.Date birthDate = new java.sql.Date(date.getTime());
+				System.out.println("update birth date");
+				currentUser.setBirth(birthDate);
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		// update the modified info
+		if (!intro.equals(currentUser.getIntro()) && !intro.equals("")) {
+			currentUser.setIntro(intro);
+			System.out.println("update intro");
+		}
+		if (!interest.equals(currentUser.getInterest()) && !interest.equals("")) {
+			currentUser.setInterest(interest);
+			System.out.println("update interest");
+		}
+		if (!website.equals(currentUser.getWebsite()) && !website.equals("")) {
+			currentUser.setWebsite(website);
+			System.out.println("update website");
+		}
+		if (sex != currentUser.getSex()) {
+			currentUser.setSex(sex);
+			System.out.println("update sex");
+		}
+		try {
+			uService.updateUser(currentUser);
+			result.put("isDone", "ture");
+		} catch (IncorrectUpdateSemanticsDataAccessException e) {
+			System.out.println(e.getMessage());
+			result.put("isDone", "flase");
+		}
+		
+		/*// clean the old session and cookie
+		sessionStatus.setComplete();
+		CookieUtil.removeCookie(request, response, "USER_COOKIE");
+		// generate new session and cookie
+		model.addAttribute("USER_SESSION", currentUser);
+		response.addCookie(CookieUtil.generateUserCookie(currentUser));*/
+		
+		return result;
+	}
+	/*
+	 * Nickname editing page
+	 */
+	@RequestMapping("setting/nickname")
+	public String settingNickname(ModelMap model,
+								  HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+
+		return "USER/setting";
+	}
+	
+	/*
+	 * Reset password page
+	 */
+	@RequestMapping("setting/password")
+	public String resetPassword(ModelMap model,
+								HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+
+		return "USER/setting";
+	}
+	
+	/*
+	 * Senior info setting page
+	 */
+	@RequestMapping("setting/senior")
+	public String editSenior(ModelMap model,
+							 HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+
+		return "USER/setting";
+	}
+	
+	/*
+	 * College info setting page
+	 */
+	@RequestMapping("setting/college")
+	public String editCollege(ModelMap model,
+							  HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+
+		return "USER/setting";
+	}
+	
+	/*
+	 * Avatar uploading page
+	 */
+	@RequestMapping("setting/avatar")
+	public String uploadAvatar(ModelMap model,
+							   HttpSession session) {
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+
+		return "USER/setting";
 	}
 	
 	@RequestMapping("list")

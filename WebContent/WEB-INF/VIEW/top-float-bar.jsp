@@ -54,7 +54,7 @@ $(document).ready(function() {
 	// LOGOUT
 	$("#user-bar #logout").click(function() {
 		$.ajax( {
-			url: "user/logout",
+			url: "<%=basepath%>/user/logout",
 			type: "POST"
 		}).done(function( json ) {
 			window.location.reload();
@@ -64,12 +64,6 @@ $(document).ready(function() {
 			$("body").append(XMLHttpRequest.responseText);
 		});
 	});
-	/* // HOVER
-	$("#user-bar #user-title").hover(function() {
-		$(this).toggleClass("open" ,true);
-	}, function() {
-		$(this).toggleClass("open", false);
-	}); */
 });
 </script>
 <div id="top-bar">
@@ -82,7 +76,7 @@ $(document).ready(function() {
 			</c:when>
 			<c:otherwise>
 				<div id="user-title" class="dropdown">
-					<a href="<%=basepath%>/user"><img alt="${sessionScope.USER_SESSION.name}的头像" title="前往我的主页" src="${sessionScope.USER_SESSION.photo}"></a>
+					<a href="<%=basepath%>/user"><img alt="${sessionScope.USER_SESSION.name}的头像" title="前往我的主页" src="<%=basepath%>/${sessionScope.USER_SESSION.photo}"></a>
 					<span class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
 						<c:out value="${sessionScope.USER_SESSION.name}" />
 						<b class="caret"></b>
@@ -92,8 +86,8 @@ $(document).ready(function() {
 						<li><a href="#">My Clubs</a></li>
 					</ul>
 				</div>
-				<div><a href="#"><img title="消息" src="images/message.png" /></a></div>
-				<div><a href="<%=basepath%>/user/setting"><img title="设置" src="images/setting.png" /></a></div>
+				<div><a href="#"><img title="消息" src="<%=basepath%>/images/message.png" /> <span class="badge">0</span></a></div>
+				<div><a href="<%=basepath%>/user/setting"><img title="设置" src="<%=basepath%>/images/setting.png" /></a></div>
 				<div id="logout">登出</div>
 			</c:otherwise>
 		</c:choose>
