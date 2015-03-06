@@ -78,7 +78,7 @@ $(document).ready(function() {
 				<div id="user-title" class="dropdown">
 					<a href="<%=basepath%>/user"><img alt="${sessionScope.USER_SESSION.name}的头像" title="前往我的主页" src="<%=basepath%>/${sessionScope.USER_SESSION.photo}"></a>
 					<span class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
-						<c:out value="${sessionScope.USER_SESSION.name}" />
+						<span id="user-name"><c:out value="${sessionScope.USER_SESSION.name}" /></span>
 						<b class="caret"></b>
 					</span>
 					<ul class="dropdown-menu">

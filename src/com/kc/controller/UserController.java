@@ -249,51 +249,49 @@ public class UserController {
 											 String interest,
 											 int sex,
 											 String birth,
-											 String website) {
+											 String website,
+											 String name,
+											 String newInputPassword) {
 		User currentUser = (User) session.getAttribute("USER_SESSION");
 		Map<String, Object> result = new HashMap<String, Object>();
-		
 		System.out.println("intro: " + intro);
 		System.out.println("interest: " + interest);
 		System.out.println("sex: " + sex);
 		System.out.println("birth: " + birth);
-		System.out.println("website" + website);
+		System.out.println("website " + website);
+		System.out.println("newInputPassword " + newInputPassword);
 		
-		if (!birth.equals(currentUser.getBirth().toString()) && !birth.equals("")) {
-			// parse birth date string
-			try {
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-				java.util.Date date = format.parse(birth);
-				java.sql.Date birthDate = new java.sql.Date(date.getTime());
-				System.out.println("update birth date");
-				currentUser.setBirth(birthDate);
-			} catch (ParseException e) {
-				System.out.println(e.getMessage());
-			}
+		if (currentUser == null) {
+			result.put("isLogin", false);
+			return result;
 		}
-		// update the modified info
-		if (!intro.equals(currentUser.getIntro()) && !intro.equals("")) {
-			currentUser.setIntro(intro);
-			System.out.println("update intro");
+		
+		// save profile part
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date date = format.parse(birth);
+			java.sql.Date birthDate = new java.sql.Date(date.getTime());
+			currentUser.setBirth(birthDate);
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 		}
-		if (!interest.equals(currentUser.getInterest()) && !interest.equals("")) {
-			currentUser.setInterest(interest);
-			System.out.println("update interest");
-		}
-		if (!website.equals(currentUser.getWebsite()) && !website.equals("")) {
-			currentUser.setWebsite(website);
-			System.out.println("update website");
-		}
-		if (sex != currentUser.getSex()) {
-			currentUser.setSex(sex);
-			System.out.println("update sex");
-		}
+		currentUser.setIntro(intro);
+		currentUser.setInterest(interest);
+		currentUser.setWebsite(website);
+		currentUser.setSex(sex);
+		// save username part
+		currentUser.setName(name);
+		// reset password
+		if (!newInputPassword.equals(""))
+			currentUser.setPassword(MD5Util.encryptCode(newInputPassword));
+		
+		// save the update
 		try {
 			uService.updateUser(currentUser);
 			result.put("isDone", "ture");
 		} catch (IncorrectUpdateSemanticsDataAccessException e) {
 			System.out.println(e.getMessage());
-			result.put("isDone", "flase");
+			result.put("isDone", "false");
 		}
 		
 		/*// clean the old session and cookie
@@ -304,60 +302,6 @@ public class UserController {
 		response.addCookie(CookieUtil.generateUserCookie(currentUser));*/
 		
 		return result;
-	}
-	/*
-	 * Nickname editing page
-	 */
-	@RequestMapping("setting/nickname")
-	public String settingNickname(ModelMap model,
-								  HttpSession session) {
-		User currentUser = (User) session.getAttribute("USER_SESSION");
-
-		return "USER/setting";
-	}
-	
-	/*
-	 * Reset password page
-	 */
-	@RequestMapping("setting/password")
-	public String resetPassword(ModelMap model,
-								HttpSession session) {
-		User currentUser = (User) session.getAttribute("USER_SESSION");
-
-		return "USER/setting";
-	}
-	
-	/*
-	 * Senior info setting page
-	 */
-	@RequestMapping("setting/senior")
-	public String editSenior(ModelMap model,
-							 HttpSession session) {
-		User currentUser = (User) session.getAttribute("USER_SESSION");
-
-		return "USER/setting";
-	}
-	
-	/*
-	 * College info setting page
-	 */
-	@RequestMapping("setting/college")
-	public String editCollege(ModelMap model,
-							  HttpSession session) {
-		User currentUser = (User) session.getAttribute("USER_SESSION");
-
-		return "USER/setting";
-	}
-	
-	/*
-	 * Avatar uploading page
-	 */
-	@RequestMapping("setting/avatar")
-	public String uploadAvatar(ModelMap model,
-							   HttpSession session) {
-		User currentUser = (User) session.getAttribute("USER_SESSION");
-
-		return "USER/setting";
 	}
 	
 	@RequestMapping("list")

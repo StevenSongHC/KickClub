@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,12 @@ import com.kc.dto.CityDTO;
 import com.kc.dto.CollegeDTO;
 import com.kc.model.City;
 import com.kc.model.College;
+import com.kc.model.User;
 import com.kc.service.CityService;
 import com.kc.service.CollegeService;
 import com.kc.service.ProvinceService;
 import com.kc.service.UserService;
+import com.kc.util.MD5Util;
 
 /*
  * For fetching data by Ajax
@@ -150,5 +154,41 @@ public class AjaxDataController {
 	 * Return city list
 	 * 返回全部城市数据
 	 */
+	
+	/*
+	 * Check username
+	 * 检测用户名（昵称）是否重复
+	 */
+	@RequestMapping(value = "checkUserName")
+	@ResponseBody
+	public Map<String, Object> checkUserName(String username) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (uService.getUserByName(username) != null)
+			result.put("isExisted", true);
+		else
+			result.put("isExisted", false);
+		return result;
+	}
+	
+	/*
+	 * Validate password
+	 */
+	@RequestMapping(value = "validatePassword")
+	@ResponseBody
+	public Map<String, Object> validatePassword(HttpSession session,  
+												String inputPassword) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+		if (currentUser == null)
+			result.put("isLogin", false);
+		else {
+			result.put("isLogin", true);
+			if (MD5Util.authenticateInputPassword(currentUser.getPassword(), inputPassword))
+				result.put("isRight", true);
+			else
+				result.put("isRight", false);
+		}
+		return result;
+	}
 	
 }

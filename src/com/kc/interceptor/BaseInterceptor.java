@@ -30,17 +30,29 @@ public class BaseInterceptor implements HandlerInterceptor {
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equals("USER_COOKIE")) {
 						User user = uService.getUserByName(cookie.getValue().split(",")[1]);
-						if (cookie.getValue().split(",")[2].equals(user.getPassword())) {
-							request.getSession().setAttribute("USER_SESSION", user);	// add user session
+						if (user != null) {
+							String password = cookie.getValue().split(",")[2];
 							
-							cookie.setValue("");										// remove the old cookie first
+							cookie.setValue("");											// remove the old cookie first
 							cookie.setMaxAge(0);
 							cookie.setPath("/");
 							response.addCookie(cookie);
-							response.addCookie(CookieUtil.generateUserCookie(user));	// then add the old one
+							
+							if (password.equals(user.getPassword())) {
+								request.getSession().setAttribute("USER_SESSION", user);	// add user session
+								
+								response.addCookie(CookieUtil.generateUserCookie(user));	// add the new cookie
+							}
+							if (request.getSession().getAttribute("USER_SESSION") != null)  // don't know why the heck does it run 4 times
+								break;
 						}
-						if (request.getSession().getAttribute("USER_SESSION") != null)  // don't know why the heck does it run 4 times
-							break;
+						else {
+							// clear the wrong cookie
+							cookie.setValue("");
+							cookie.setMaxAge(0);
+							cookie.setPath("/");
+							response.addCookie(cookie);
+						}
 					}	
 				}
 			}

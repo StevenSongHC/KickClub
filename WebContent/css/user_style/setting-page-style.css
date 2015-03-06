@@ -45,3 +45,18 @@
 .add-on {
 	cursor: pointer;
 }
+#password #password-field div {
+	margin-top: 10px;
+}
+#password #password-field label {
+	width: 20%;
+	text-align: right;
+}
+#password #password-field input {
+	width: 45%;
+	padding: 3px;
+	margin-left: 15px;
+}
+#alert-box div {
+	display: none;
+}
