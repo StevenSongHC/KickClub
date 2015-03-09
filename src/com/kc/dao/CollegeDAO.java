@@ -17,6 +17,8 @@ public interface CollegeDAO {
 	
 	public List<College> getAllCollege();
 	
+	public List<College> getCollegeListByProvinceId(int provinceId);
+	
 	public List<College> getCollegeListByCityId(int cityId);
 	
 }

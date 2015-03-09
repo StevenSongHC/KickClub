@@ -139,7 +139,7 @@ $(document).ready(function() {
 		isAllFilled();
 	});
 	$("#from-province").change(function() {
-		if ($(this).val !== null) {
+		if ($(this).val() != 0) {
 			$.ajax( {
 				url: "../ajax/getCityListByProvinceId",
 				type: "POST",
@@ -161,9 +161,16 @@ $(document).ready(function() {
 				$("body").append(XMLHttpRequest.responseText);
 			});
 		}
+		else {
+			$("#from-city").html("");
+			$("#from-city").append("<option value='0'></option>");
+			$("#from-city").prop("disabled", true);
+			$("#from-city").selectpicker("refresh");
+		}
 	});
 	$("#present-province").change(function() {
-		if ($(this).val !== null) {
+		if ($(this).val() != 0) {
+			// fetch city list
 			$.ajax( {
 				url: "../ajax/getCityListByProvinceId",
 				type: "POST",
@@ -184,10 +191,41 @@ $(document).ready(function() {
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
 			});
+			// fetch college list
+			$.ajax( {
+				url: "../ajax/getCollegeListByProvinceId",
+				type: "POST",
+				dataType: "JSON",
+				data: {
+					provinceId: $(this).val()
+				}
+			}).done(function( json ) {
+				$("#college").html("");
+				$("#college").prop("disabled", false);
+				$("#college").append("<option value='0'></option>");
+				$.each(json.list, function(i, clg) {
+					$("#college").append("<option value='" + clg.id + "'>" + clg.name + "</option>");
+				});
+				$("#college").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+		else {
+			$("#present-city").html("");
+			$("#present-city").append("<option value='0'></option>");
+			$("#present-city").prop("disabled", true);
+			$("#present-city").selectpicker("refresh");
+			$("#college").html("");
+			$("#college").append("<option value='0'></option>");
+			$("#college").prop("disabled", true);
+			$("#college").selectpicker("refresh");
 		}
 	});
 	$("#present-city").change(function() {
-		if ($(this).val !== null) {
+		if ($(this).val() != 0) {
 			$.ajax( {
 				url: "../ajax/getCollegeListByCityId",
 				type: "POST",

@@ -231,6 +231,18 @@ public class UserController {
 		
 		model.addAttribute("user", userView);*/
 		
+		// pass province & city name
+		if (currentUser.getFromProvince() != 0)
+			model.addAttribute("fromProvinceName", prService.getProvinceById(currentUser.getFromProvince()).getName());
+		if (currentUser.getFromCity() != 0)
+			model.addAttribute("fromCityName", ctService.getCityById(currentUser.getFromCity()).getName());
+		if (currentUser.getPresentProvince() != 0)
+			model.addAttribute("presentProvinceName", prService.getProvinceById(currentUser.getPresentProvince()).getName());
+		if (currentUser.getPresentCity() != 0)
+			model.addAttribute("presentCityName", ctService.getCityById(currentUser.getPresentCity()).getName());
+		if (currentUser.getCollege() != 0)
+			model.addAttribute("collegeName", clgService.getCollegeById(currentUser.getCollege()).getName());
+				
 		model.addAttribute("user", currentUser);
 		return "USER/setting";
 	}
@@ -251,7 +263,15 @@ public class UserController {
 											 String birth,
 											 String website,
 											 String name,
-											 String newInputPassword) {
+											 String newInputPassword,
+											 int fromProvince,
+											 int fromCity,
+											 String senior,
+											 int presentProvince,
+											 int presentCity,
+											 int college,
+											 String collegeMajor,
+											 String joinCollegeDate) {
 		User currentUser = (User) session.getAttribute("USER_SESSION");
 		Map<String, Object> result = new HashMap<String, Object>();
 		System.out.println("intro: " + intro);
@@ -260,6 +280,14 @@ public class UserController {
 		System.out.println("birth: " + birth);
 		System.out.println("website " + website);
 		System.out.println("newInputPassword " + newInputPassword);
+		System.out.println("fromProvince " + fromProvince);
+		System.out.println("fromCity " + fromCity);
+		System.out.println("senior " + senior);
+		System.out.println("presentProvince " + presentProvince);
+		System.out.println("presentCity " + presentCity);
+		System.out.println("college " + college);
+		System.out.println("collegeMajor " + collegeMajor);
+		System.out.println("joinCollegeDate " + joinCollegeDate);
 		
 		if (currentUser == null) {
 			result.put("isLogin", false);
@@ -284,6 +312,23 @@ public class UserController {
 		// reset password
 		if (!newInputPassword.equals(""))
 			currentUser.setPassword(MD5Util.encryptCode(newInputPassword));
+		// save senior info part
+		currentUser.setFromProvince(fromProvince);
+		currentUser.setFromCity(fromCity);
+		currentUser.setSenior(senior);
+		// save college info part
+		currentUser.setPresentProvince(presentProvince);
+		currentUser.setPresentCity(presentCity);
+		currentUser.setCollege(college);
+		currentUser.setCollegeMajor(collegeMajor);
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date date = format.parse(joinCollegeDate);
+			java.sql.Date joinCollegeDateDate = new java.sql.Date(date.getTime());
+			currentUser.setJoinCollegeDate(joinCollegeDateDate);
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
+		}
 		
 		// save the update
 		try {

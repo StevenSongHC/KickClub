@@ -27,6 +27,10 @@
         ]]>
     </select>
     
+    <select id="getCollegeListByProvinceId" parameterType="int" resultType="College" resultMap="collegeResultMap">
+            SELECT * FROM college WHERE clg_province=#{cityId}
+    </select>
+    
     <select id="getCollegeListByCityId" parameterType="int" resultType="College" resultMap="collegeResultMap">
             SELECT * FROM college WHERE clg_city=#{cityId}
     </select>

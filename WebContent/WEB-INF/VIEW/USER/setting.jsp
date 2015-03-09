@@ -3,6 +3,7 @@
 <% 
 String basepath = request.getContextPath();
 %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -10,7 +11,9 @@ String basepath = request.getContextPath();
 <jsp:include page="../include.jsp" flush="true" />
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/user_style/setting-page-style.css">
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-datepicker.css">
+<link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-select.min.css">
 <script type="text/javascript"	src="<%=basepath%>/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript"	src="<%=basepath%>/js/bootstrap-select.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	
@@ -25,8 +28,16 @@ $(document).ready(function() {
 	var userInterest = $("#setting-content #interest textarea").val();
 	var userSex = $("input[type='radio'][name='sexValue']:checked").val();
 	var userBirth = $("#setting-content #birthDate").val();
-	var userWebsite = $("#setting-content #website").val();
-	var userName = $("input#name").val();
+	var userWebsite = $("#setting-content #website").val().trim();
+	var userName = $("input#name").val().trim();
+	var userFromProvince = $("select#from-province").val();
+	var userFromCity = $("select#from-city").val();
+	var userSenior = $("input#senior-name").val().trim();
+	var userPresentProvince = $("select#present-province").val();
+	var userPresentCity = $("select#present-city").val();
+	var userCollege = $("select#present-college").val();
+	var userCollegeMajor = $("input#college-major").val().trim();
+	var userJoinCollegeDate = $("input#join-college-date").val();
 	isIntroChange = false;
 	isInterestChange = false;
 	isSexChange = false;
@@ -34,6 +45,16 @@ $(document).ready(function() {
 	isWebsiteChange = false;
 	isNameChange = false;
 	isNewPasswordInput = false;
+	isFromProvinceChange = false;
+	isFromCityChange = false;
+	isSeniorChange = false;
+	isPresentProvinceChange = false;
+	isPresentCityChange = false;
+	isCollegeChange = false;
+	isCollegeMajorChange = false;
+	isJoinCollegeDateChange = false;
+	
+	$("select").selectpicker();
 	
 	/* var nowTemp = new Date();
 	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0); */
@@ -44,7 +65,11 @@ $(document).ready(function() {
 						if ($("#birthDate").val() != userBirth)
 							isBirthChange = true;
 						else
-							usBirthChange = false;
+							isBirthChange = false;
+						if ($("#join-college-date").val() != userJoinCollegeDate)
+							isJoinCollegeDateChange = true;
+						else
+							isJoinCollegeDateChange = false;
 						canSave();
 					});
 	
@@ -70,7 +95,7 @@ $(document).ready(function() {
 		canSave();
 	});
 	$("#setting-content #website").keyup(function() {
-		if ($(this).val() != userWebsite)
+		if ($(this).val().trim() != userWebsite)
 			isWebsiteChange = true;
 		else
 			isWebsiteChange = false;
@@ -78,7 +103,7 @@ $(document).ready(function() {
 	});
 	///// username part /////
 	$("input#name").keyup(function() {
-		if ($(this).val() != userName)
+		if ($(this).val().trim() != userName)
 			isNameChange = true;
 		else
 			isNameChange = false;
@@ -90,6 +115,232 @@ $(document).ready(function() {
 			isNewPasswordInput = true;
 		else
 			isNewPasswordInput = false;
+		canSave();
+	});
+	///// senior info part /////	
+	$("button[data-id='from-province']").click(function() {
+		if ($("#from-province option").length < 3) {
+			$.ajax( {
+				url: "../ajax/getAllProvinceList",
+				type: "POST",
+				dataType: "JSON",
+			}).done(function( json ) {
+				$.each(json.list, function(i, pr) {
+					if (pr.id != ${user.fromProvince})
+						$("#from-province").append("<option value='" + pr.id + "'>" + pr.name + "</option>");
+				});
+				$("#from-province").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("button[data-id='from-city']").click(function() {
+		if ($("#from-city option").length < 3 || $(this).val() != 0) {
+			$.ajax( {
+				url: "../ajax/getCityListByProvinceId",
+				type: "POST",
+				dataType: "JSON",
+				data: {
+					provinceId: $("#from-province").val()
+				}
+			}).done(function( json ) {
+				$.each(json.list, function(i, ct) {
+					if (ct.id != ${user.fromCity})
+						$("#from-city").append("<option value='" + ct.id + "'>" + ct.name + "</option>");
+				});
+				$("#from-city").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("select#from-province").change(function() {
+		if ($(this).val() != 0) {
+			$.ajax( {
+				url: "../ajax/getCityListByProvinceId",
+				type: "POST",
+				dataType: "JSON",
+				data: {
+					provinceId: $(this).val()
+				}
+			}).done(function( json ) {
+				$("#from-city").html("");
+				$("#from-city").append("<option value='0'></option>");
+				$.each(json.list, function(i, ct) {
+					$("#from-city").append("<option value='" + ct.id + "'>" + ct.name + "</option>");
+				});
+				$("#from-city").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+		else {
+			$("#from-city").html("");
+			$("#from-city").append("<option value='0'></option>");
+			$("#from-city").selectpicker("refresh");
+		}
+		if ($(this).val() != userFromProvince)
+			isFromProvinceChange = true;
+		else {
+			isFromProvinceChange = false;
+			isFromCityChange = true;
+		}
+		canSave();
+	});
+	$("select#from-city").change(function() {
+		if ($(this).val() != userFromCity)
+			isFromCityChange = true;
+		else
+			isFromCityChange = false;
+		canSave();
+	});
+	$("input#senior-name").keyup(function() {
+		if ($(this).val().trim() != userSenior)
+			isSeniorChange = true;
+		else
+			isSeniorChange = false;
+		canSave();
+	});
+	///// college info part /////
+	$("button[data-id='present-province']").click(function() {
+		if ($("#present-province option").length < 3) {
+			$.ajax( {
+				url: "../ajax/getAllProvinceList",
+				type: "POST",
+				dataType: "JSON",
+			}).done(function( json ) {
+				$.each(json.list, function(i, pr) {
+					// prevent repeat province option
+					if (pr.id != ${user.presentProvince})
+						$("#present-province").append("<option value='" + pr.id + "'>" + pr.name + "</option>");
+				});
+				$("#present-province").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("button[data-id='present-city']").click(function() {
+		if ($("#present-city option").length < 3) {
+			$.ajax( {
+				url: "../ajax/getCityListByProvinceId",
+				type: "POST",
+				dataType: "JSON",
+				data: {
+					provinceId: $("#present-province").val()
+				}
+			}).done(function( json ) {
+				$.each(json.list, function(i, ct) {
+					// prevent repeat & missing city option
+					if (ct.id != ${user.presentCity} || $("#present-city option[value='" + ${user.presentCity} + "']").length == 0)
+						$("#present-city").append("<option value='" + ct.id + "'>" + ct.name + "</option>");
+				});
+				$("#present-city").selectpicker("refresh");
+			}).fail(function() {
+				alert("FAIL");
+			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+				$("body").append(XMLHttpRequest.responseText);
+			});
+		}
+	});
+	$("button[data-id='present-college']").click(function() {
+		if ($("#present-college option").length < 3) {
+			if ($("select#present-city").val() != 0) {
+				$.ajax( {
+					url: "../ajax/getCollegeListByCityId",
+					type: "POST",
+					dataType: "JSON",
+					data: {
+						cityId: $("#present-city").val()
+					}
+				}).done(function( json ) {
+					$.each(json.list, function(i, clg) {
+						// prevent repeat & missing college option
+						if (clg.id != ${user.college} || $("#present-college option[value='" + ${user.college} + "']").length == 0)
+							$("#present-college").append("<option value='" + clg.id + "'>" + clg.name + "</option>");
+					});
+					$("#present-college").selectpicker("refresh");
+				}).fail(function() {
+					alert("FAIL");
+				}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+					$("body").append(XMLHttpRequest.responseText);
+				});
+			}
+			else {
+				$.ajax( {
+					url: "../ajax/getCollegeListByProvinceId",
+					type: "POST",
+					dataType: "JSON",
+					data: {
+						provinceId: $("#present-province").val()
+					}
+				}).done(function( json ) {
+					$.each(json.list, function(i, clg) {
+						if (clg.id != ${user.college} || $("#present-college option[value='" + ${user.college} + "']").length == 0)
+							$("#present-college").append("<option value='" + clg.id + "'>" + clg.name + "</option>");
+					});
+					$("#present-college").selectpicker("refresh");
+				}).fail(function() {
+					alert("FAIL");
+				}).error(function (XMLHttpRequest, textStatus, errorThrown) {
+					$("body").append(XMLHttpRequest.responseText);
+				});
+			}
+		}
+	});
+	$("select#present-province").change(function() {
+		// clear old data in order to reload the new one
+		$("#present-city").html("");
+		$("#present-city").append("<option value='0'></option>");
+		$("#present-city").selectpicker("refresh");
+		$("#present-college").html("");
+		$("#present-college").append("<option value='0'></option>");
+		$("#present-college").selectpicker("refresh");
+		
+		if ($(this).val() != userPresentProvince) {
+			isPresentProvinceChange = true;
+			isPresentCityChange = true;
+			isCollegeChange = true;
+		}
+		else
+			isPresentProvinceChange = false;
+		canSave();
+	});
+	$("select#present-city").change(function() {
+		// clear old data
+		$("#present-college").html("");
+		$("#present-college").append("<option value='0'></option>");
+		$("#present-college").selectpicker("refresh");
+		
+		if ($(this).val() != userPresentCity) {
+			isPresentCityChange = true;
+			isCollegeChange = true;
+		}
+		else
+			isPresentCityChange = false;
+		canSave();
+	});
+	$("select#present-college").change(function() {
+		if ($(this).val() != userCollege)
+			isCollegeChange = true;
+		else
+			isCollegeChange = false;
+		canSave();
+	});
+	$("input#college-major").keyup(function() {
+		if ($(this).val().trim() != userCollegeMajor)
+			isCollegeMajorChange = true;
+		else
+			isCollegeMajorChange = false;
 		canSave();
 	});
 	
@@ -188,6 +439,18 @@ $(document).ready(function() {
 		}
 		if (!canGo)
 			return;
+		if ($("input#senior-name").val().trim().length > 25) {
+			$("#bad-senior-name-length").show();
+			canGo = false;
+		}
+		if (!canGo)
+			return;
+		if ($("input#college-major").val().trim().length > 25) {
+			$("#bad-college-major-length").show();
+			canGo = false;
+		}
+		if (!canGo)
+			return;
 		
 		$.ajax( {
 			url: "<%=basepath%>/user/setting/save",
@@ -198,9 +461,17 @@ $(document).ready(function() {
 				interest: $("#setting-content #interest textarea").val(),
 				sex: $("input[type='radio'][name='sexValue']:checked").val(),
 				birth: $("input#birthDate").val(),
-				website: $("input#website").val(),
-				name: $("input#name").val(),
-				newInputPassword: $("input#new-password").val()
+				website: $("input#website").val().trim(),
+				name: $("input#name").val().trim(),
+				newInputPassword: $("input#new-password").val(),
+				fromProvince: $("select#from-province").val(),
+				fromCity: $("select#from-city").val(),
+				senior: $("input#senior-name").val().trim(),
+				presentProvince: $("select#present-province").val(),
+				presentCity: $("select#present-city").val(),
+				college: $("select#present-college").val(),
+				collegeMajor: $("input#college-major").val().trim(),
+				joinCollegeDate: $("input#join-college-date").val()
 			}
 		}).done(function( json ) {
 			if (json.isDone) {
@@ -211,8 +482,16 @@ $(document).ready(function() {
 				userInterest = $("#setting-content #interest textarea").val();
 				userSex = $("input[type='radio'][name='sexValue']:checked").val();
 				userBirth = $("input#birthDate").val();
-				userWebsite = $("input#website").val();
-				userName = $("input#name").val();
+				userWebsite = $("input#website").val().trim();
+				userName = $("input#name").val().trim();
+				userFromProvince = $("select#from-province").val();
+				userFromCity = $("select#from-city").val();
+				userSenior = $("input#senior-name").val().trim().trim();
+				userPresentProvince = $("select#present-province").val();
+				userPresentCity = $("select#present-city").val();
+				userCollege = $("select#present-college").val();
+				userCollegeMajor = $("input#college-major").val().trim();
+				joinCollegeDate = $("input#join-college-date").val();
 				
 				// refresh username
 				$("#user-showcase #user-nickname").html("<b>" + userName + "</b>");
@@ -242,7 +521,9 @@ function openSetting(option) {
 function canSave() {
 	if (isIntroChange || isInterestChange || isSexChange || isBirthChange || isWebsiteChange ||
 			isNameChange ||
-			isNewPasswordInput)
+			isNewPasswordInput ||
+			isFromProvinceChange || isFromCityChange || isSeniorChange ||
+			isPresentProvinceChange || isPresentCityChange || isCollegeChange || isCollegeMajorChange || isJoinCollegeDateChange)
 		$("#setting-content #save").removeAttr("disabled");
 	else
 		$("#setting-content #save").attr("disabled", "true");
@@ -295,7 +576,7 @@ function canSave() {
 						<ul class="list-group">
 							<li class="list-group-item">省份</li>
 							<li class="list-group-item">城市</li>
-							<li class="list-group-item">大学名字</li>
+							<li class="list-group-item">我的大学</li>
 							<li class="list-group-item">专业</li>
 							<li class="list-group-item">入学日期</li>
 						</ul>
@@ -395,7 +676,20 @@ function canSave() {
 							<h4>地理位置</h4>
 						</div>
 						<div class="panel-body">
-							
+							<h1><small>省份</small></h1>
+							<select id="from-province" class="selectpicker" title="高中所在省份" data-style="btn-info" data-live-search="true">
+							<c:if test="${user.fromProvince != 0}">
+								<option value="0"></option>
+							</c:if>
+								<option value="${user.fromProvince}" selected="selected">${fromProvinceName}</option>
+							</select>
+							<h1><small>城市</small></h1>
+							<select id="from-city" class="selectpicker" title="高中所在城市" data-live-search="true">
+							<c:if test="${user.fromCity != 0}">
+								<option value="0"></option>
+							</c:if>
+								<option value="${user.fromCity}" selected="selected">${fromCityName}</option>
+							</select>
 						</div>
 					</div>
 					<div class="panel panel-info" id="senior-name">
@@ -403,7 +697,7 @@ function canSave() {
 							<h4>高中名字</h4>
 						</div>
 						<div class="panel-body">
-							
+							<input id="senior-name" type="text" style="width: 70%; padding: 3px;" value="${user.senior}">
 						</div>
 					</div>
 				</div>
@@ -414,15 +708,33 @@ function canSave() {
 							<h4>地理位置</h4>
 						</div>
 						<div class="panel-body">
-							
+							<h1><small>省份</small></h1>
+							<select id="present-province" class="selectpicker" title="大学所在省份" data-style="btn-primary" data-live-search="true">
+							<c:if test="${user.presentProvince != 0}">
+								<option value="0"></option>
+							</c:if>
+								<option value="${user.presentProvince}" selected="selected">${presentProvinceName}</option>
+							</select>
+							<h1><small>城市</small></h1>
+							<select id="present-city" class="selectpicker" title="大学所在城市" data-live-search="true">
+							<c:if test="${user.presentCity != 0}">
+								<option value="0"></option>
+							</c:if>
+								<option value="${user.presentCity}" selected="selected">${presentCityName}</option>
+							</select>
 						</div>
 					</div>
 					<div class="panel panel-primary" id="college-name">
 						<div class="panel-heading">
-							<h4>大学名字</h4>
+							<h4>我的大学</h4>
 						</div>
 						<div class="panel-body">
-							
+							<select id="present-college" class="selectpicker" title="大学名字" data-style="btn-primary" data-live-search="true">
+							<c:if test="${user.college != 0}">
+								<option value="0"></option>
+							</c:if>
+								<option value="${user.college}" selected="selected">${collegeName}</option>
+							</select>
 						</div>
 					</div>
 					<div class="panel panel-primary" id="college-detail">
@@ -430,7 +742,15 @@ function canSave() {
 							<h4>其他</h4>
 						</div>
 						<div class="panel-body">
-							
+							<h2><small>专业</small></h2>
+							<input id="college-major" type="text" style="width: 50%; padding: 5px;" value="${user.collegeMajor}">
+							<h2><small>入学日期</small></h2>
+							<div class="datepicker input-append date" data-date="2000-01-01" data-date-formate="yyyy-mm-dd" data-date-viewmode="years">
+								<input id="join-college-date" class="span2" size="16" type="text" value="${user.joinCollegeDate}" readonly>
+								<span class="add-on">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -457,6 +777,8 @@ function canSave() {
 					<div id="wrong-password" class="alert alert-danger" role="alert">输入的原密码不正确</div>
 					<div id="same-password" class="alert alert-warning" role="alert">新密码与旧密码一样</div>
 					<div id="wrong-repeat-password" class="alert alert-danger" role="alert">重输入的密码不一致</div>
+					<div id="bad-senior-name-length" class="alert alert-warning" role="alert">高中名字不得大于25个字符</div>
+					<div id="bad-college-major-length" class="alert alert-warning" role="alert">填写的专业不得大于25个字符</div>
 				</div>
 							
 				<button id="save" type="button" class="btn btn-primary btn-lg" disabled="disabled">保存</button>

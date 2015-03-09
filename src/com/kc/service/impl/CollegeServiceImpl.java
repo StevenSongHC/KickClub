@@ -26,6 +26,10 @@ public class CollegeServiceImpl implements CollegeService {
 	public List<College> getAllCollege() {
 		return clgDao.getAllCollege();
 	}
+	
+	public List<College> getCollegeListByProvinceId(int cityId) {
+		return clgDao.getCollegeListByProvinceId(cityId);
+	}
 
 	public List<College> getCollegeListByCityId(int cityId) {
 		return clgDao.getCollegeListByCityId(cityId);

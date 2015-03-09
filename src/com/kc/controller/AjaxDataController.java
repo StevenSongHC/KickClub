@@ -111,8 +111,8 @@ public class AjaxDataController {
 	 */
 	@RequestMapping(value = "getCityListByProvinceId")
 	@ResponseBody
-	public Map<String, Object> getCityListByPrName(int provinceId) {
-		System.out.println("getCityListByProvinceName");
+	public Map<String, Object> getCityListByPrId(int provinceId) {
+		System.out.println("getCityListByProvinceId");
 		Map<String, Object> cityList = new HashMap<String, Object>();
 		List<CityDTO> cityViewList = new ArrayList<CityDTO>();
 		List<City> cityDataList = ctService.getCityListByProvinceId(provinceId);
@@ -128,12 +128,35 @@ public class AjaxDataController {
 	}
 	
 	/*
+	 * Return college list by the province'id
+	 * 返回对应省份的大学列表
+	 */
+	@RequestMapping(value = "getCollegeListByProvinceId")
+	@ResponseBody
+	public Map<String, Object> getCollegeListByProvinceId(int provinceId) {
+		System.out.println("getCollegeListByProvinceId");
+		Map<String, Object> collegeList = new HashMap<String, Object>();
+		List<CollegeDTO> collegeViewList = new ArrayList<CollegeDTO>();
+		List<College> collegeDataList = clgService.getCollegeListByProvinceId(provinceId);
+		
+		for (College college : collegeDataList) {
+			CollegeDTO collegeView = new CollegeDTO(college.getId(), college.getName(), college.getIntro());
+			collegeView.setProvince(prService.getProvinceById(college.getProvinceId()));
+			collegeView.setCity(ctService.getCityById(college.getCityId()));
+			collegeViewList.add(collegeView);
+		}
+		
+		collegeList.put("list", collegeViewList);
+		return collegeList;
+	}
+	
+	/*
 	 * Return college list by the city'id
-	 * 返回对应省份的城市列表
+	 * 返回对应城市的大学列表
 	 */
 	@RequestMapping(value = "getCollegeListByCityId")
 	@ResponseBody
-	public Map<String, Object> getCollegeListByPrName(int cityId) {
+	public Map<String, Object> getCollegeListByCtId(int cityId) {
 		System.out.println("getCollegeListByCityId");
 		Map<String, Object> collegeList = new HashMap<String, Object>();
 		List<CollegeDTO> collegeViewList = new ArrayList<CollegeDTO>();
