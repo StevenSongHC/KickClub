@@ -1,10 +1,14 @@
 package com.kc.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import net.sf.json.JSONObject;
@@ -12,7 +16,9 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.kc.dto.CityDTO;
 import com.kc.dto.CollegeDTO;
@@ -195,6 +201,7 @@ public class AjaxDataController {
 	
 	/*
 	 * Validate password
+	 * 验证密码是否正确
 	 */
 	@RequestMapping(value = "validatePassword")
 	@ResponseBody
@@ -210,6 +217,55 @@ public class AjaxDataController {
 				result.put("isRight", true);
 			else
 				result.put("isRight", false);
+		}
+		return result;
+	}
+	
+	/*
+	 * Upload ajax form
+	 * 使用ajax form 上传数据
+	 */
+	@RequestMapping(value = "ajaxFormSubmit")
+	@ResponseBody
+	public Map<String, Object> ajaxFormSubmit(HttpSession session,
+											  HttpServletRequest request,
+			  								  @RequestParam(value="uploadFile") MultipartFile uploadFile, 
+											  String type,
+											  String fileType) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		User currentUser = (User) session.getAttribute("USER_SESSION");
+		if (currentUser == null)
+			result.put("isLogin", false);
+		else {
+			result.put("isLogin", true);
+			if (type != null && !type.equals("")) {
+				if (type.equals("userPhoto")) {
+					String saveName = "images/portrait/" + currentUser.getId() + "_" + Calendar.getInstance().getTimeInMillis() + fileType;
+					String savePath = request.getServletContext().getRealPath("") + "/" + saveName;
+					
+					if (!currentUser.getPhoto().equals("images/portrait/default.png")) {
+						// delete the old portrait
+						if (new File(request.getServletContext().getRealPath("")+ "/" +currentUser.getPhoto()).delete()) {
+							// save the new portrait
+							try {
+								uploadFile.transferTo(new File(savePath));
+								// update user portrait info
+								currentUser.setPhoto(saveName);
+								uService.updateUser(currentUser);
+								result.put("isGood", true);
+								result.put("newUserPhoto", currentUser.getPhoto());
+							} catch (IOException e) {
+								System.out.println("fail to save file");
+								result.put("isGood", false);
+								e.printStackTrace();
+							}
+						}
+						else
+							result.put("isGood", false);
+					}
+				}
+			}
+			
 		}
 		return result;
 	}

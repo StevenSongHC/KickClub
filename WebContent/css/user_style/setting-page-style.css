@@ -57,6 +57,16 @@
 	padding: 3px;
 	margin-left: 15px;
 }
+#portrait #photo-preview {
+	width: 200px;
+	height: 200px;
+	margin: 5px 0 20px 5px;
+	border: 2px dotted #000;
+}
+#portrait .progress {
+	width: 65%;
+	margin-top: 10px;
+}
 #alert-box div {
 	display: none;
 }

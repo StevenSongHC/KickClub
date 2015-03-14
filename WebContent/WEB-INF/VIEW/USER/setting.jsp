@@ -14,6 +14,7 @@ String basepath = request.getContextPath();
 <link rel="stylesheet" type="text/css" href="<%=basepath%>/css/bootstrap-select.min.css">
 <script type="text/javascript"	src="<%=basepath%>/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"	src="<%=basepath%>/js/bootstrap-select.min.js"></script>
+<script type="text/javascript"	src="<%=basepath%>/js/jquery.form.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	
@@ -131,7 +132,7 @@ $(document).ready(function() {
 				});
 				$("#from-province").selectpicker("refresh");
 			}).fail(function() {
-				alert("FAIL");
+				$("#fail-save").show();
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
 			});
@@ -153,7 +154,7 @@ $(document).ready(function() {
 				});
 				$("#from-city").selectpicker("refresh");
 			}).fail(function() {
-				alert("FAIL");
+				$("#fail-save").show();
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
 			});
@@ -176,7 +177,7 @@ $(document).ready(function() {
 				});
 				$("#from-city").selectpicker("refresh");
 			}).fail(function() {
-				alert("FAIL");
+				$("#fail-save").show();
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
 			});
@@ -223,7 +224,7 @@ $(document).ready(function() {
 				});
 				$("#present-province").selectpicker("refresh");
 			}).fail(function() {
-				alert("FAIL");
+				$("#fail-save").show();
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
 			});
@@ -246,7 +247,7 @@ $(document).ready(function() {
 				});
 				$("#present-city").selectpicker("refresh");
 			}).fail(function() {
-				alert("FAIL");
+				$("#fail-save").show();
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
 			});
@@ -270,7 +271,7 @@ $(document).ready(function() {
 					});
 					$("#present-college").selectpicker("refresh");
 				}).fail(function() {
-					alert("FAIL");
+					$("#fail-save").show();
 				}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 					$("body").append(XMLHttpRequest.responseText);
 				});
@@ -290,7 +291,7 @@ $(document).ready(function() {
 					});
 					$("#present-college").selectpicker("refresh");
 				}).fail(function() {
-					alert("FAIL");
+					$("#fail-save").show();
 				}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 					$("body").append(XMLHttpRequest.responseText);
 				});
@@ -343,6 +344,40 @@ $(document).ready(function() {
 			isCollegeMajorChange = false;
 		canSave();
 	});
+	///// upload new portrait /////
+	$("form#photo-form").ajaxForm({
+		beforeSerialize: function() {
+			$("#upload-progress-bar").html(0).width(0);
+			var filePath = $("form#photo-form #photo").val();
+			var fileType = filePath.substring(filePath.lastIndexOf("."), filePath.length).toUpperCase();
+			if(fileType != ".BMP" && fileType != ".PNG" && fileType != ".GIF" && fileType != ".JPG" && fileType != ".JPEG") {
+				$("#bad-new-photo").show();
+				return false;
+			}
+			$("form#photo-form #fileType").val(fileType);
+			$("#upload-progress-bar").addClass("active");
+		},
+		uploadProgress: function(event, position, total, percentComplete) {
+			var percentVal = percentComplete + "%";
+			$("#upload-progress-bar").html(percentVal).width(percentVal);
+		},
+		success: function(json) {
+			if (json.isGood) {
+				// refresh user portrait
+				$("#photo-preview").attr("src", "<%=basepath%>/" + json.newUserPhoto);
+				$("#user-showcase #user-photo img").attr("src", "<%=basepath%>/" + json.newUserPhoto);
+				$("#top-bar #user-title img").attr("src", "<%=basepath%>/" + json.newUserPhoto);
+				$("form#photo-form").resetForm();
+				BootstrapDialog.show({
+					type: BootstrapDialog.TYPE_PRIMARY,
+					message: "上传新头像成功！"
+				});
+			}
+			else
+				$("#fail-save-new-photo").show();
+			$("#upload-progress-bar").removeClass("active");
+		}
+	});
 	
 	// SAVE THE UPDATE
 	$("#setting-content #save").click(function() {
@@ -372,7 +407,7 @@ $(document).ready(function() {
 					canGo = false;
 				}
 			}).fail(function() {
-				alert("FAIL");
+				$("#fail-save").show();
 				canGo = false;
 			}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 				$("body").append(XMLHttpRequest.responseText);
@@ -429,7 +464,7 @@ $(document).ready(function() {
 					else
 						userNewInputPassword = $("input#new-password").val();
 				}).fail(function() {
-					alert("FAIL");
+					$("#fail-save").show();
 					canGo = false;
 				}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 					$("body").append(XMLHttpRequest.responseText);
@@ -497,12 +532,17 @@ $(document).ready(function() {
 				$("#user-showcase #user-nickname").html("<b>" + userName + "</b>");
 				$("#top-bar #user-title>span #user-name").html(userName);
 				canGo = false;
+				
+				BootstrapDialog.show({
+					type: BootstrapDialog.TYPE_SUCCESS,
+					message: "保存成功！"
+				});
 			}
 			else {
-				alert("保存失败");
+				$("#fail-save").show();
 			}
 		}).fail(function() {
-			alert("FAIL");
+			$("#fail-save").show();
 		}).error(function (XMLHttpRequest, textStatus, errorThrown) {
 			$("body").append(XMLHttpRequest.responseText);
 		});
@@ -638,7 +678,7 @@ function canSave() {
 				</div>
 				
 				<div id="username">
-					<div class="panel panel-primary" id="name">
+					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h4>昵称 </h4>
 						</div>
@@ -649,7 +689,7 @@ function canSave() {
 				</div>
 				
 				<div id="password">
-					<div class="panel panel-warning" id="password">
+					<div class="panel panel-warning">
 						<div class="panel-heading">
 							<h4>密码 </h4>
 						</div>
@@ -671,7 +711,7 @@ function canSave() {
 				</div>
 				
 				<div id="senior">
-					<div class="panel panel-info" id="senior-location">
+					<div class="panel panel-info">
 						<div class="panel-heading">
 							<h4>地理位置</h4>
 						</div>
@@ -692,7 +732,7 @@ function canSave() {
 							</select>
 						</div>
 					</div>
-					<div class="panel panel-info" id="senior-name">
+					<div class="panel panel-info">
 						<div class="panel-heading">
 							<h4>高中名字</h4>
 						</div>
@@ -703,7 +743,7 @@ function canSave() {
 				</div>
 				
 				<div id="college">
-					<div class="panel panel-primary" id="college-location">
+					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h4>地理位置</h4>
 						</div>
@@ -724,7 +764,7 @@ function canSave() {
 							</select>
 						</div>
 					</div>
-					<div class="panel panel-primary" id="college-name">
+					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h4>我的大学</h4>
 						</div>
@@ -737,7 +777,7 @@ function canSave() {
 							</select>
 						</div>
 					</div>
-					<div class="panel panel-primary" id="college-detail">
+					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h4>其他</h4>
 						</div>
@@ -756,12 +796,23 @@ function canSave() {
 				</div>
 				
 				<div id="portrait">
-					<div class="panel panel-primary" id="new-portrait">
+					<div class="panel panel-primary">
 						<div class="panel-heading">
 							<h4>头像</h4>
 						</div>
 						<div class="panel-body">
-							
+							<img alt="默认" src="<%=basepath%>/${user.photo}" id="photo-preview" />
+							<form action="../ajax/ajaxFormSubmit" id="photo-form" method="post" enctype="multipart/form-data">
+								<input type="file" name="uploadFile" id="photo" />
+								<input type="hidden" name="type" value="userPhoto" />
+								<input type="hidden" name="fileType" id="fileType" />
+								<input type="submit" value="上传并保存头像" />
+							</form>
+							<div class="progress">
+							  <div id="upload-progress-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%">
+							    <span></span>
+							  </div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -779,8 +830,17 @@ function canSave() {
 					<div id="wrong-repeat-password" class="alert alert-danger" role="alert">重输入的密码不一致</div>
 					<div id="bad-senior-name-length" class="alert alert-warning" role="alert">高中名字不得大于25个字符</div>
 					<div id="bad-college-major-length" class="alert alert-warning" role="alert">填写的专业不得大于25个字符</div>
+					<div id="bad-new-photo" class="alert alert-warning" role="alert">请选择图片文件(BMP, PNG, GIF, JPG, JPEG)</div>
+					<div id="fail-save-new-photo" class="alert alert-danger alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						保存新头像失败
+					</div>
+					<div id="fail-save" class="alert alert-danger alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						保存失败，请重试
+					</div>
 				</div>
-							
+				
 				<button id="save" type="button" class="btn btn-primary btn-lg" disabled="disabled">保存</button>
 				
 			</div>
