@@ -242,26 +242,25 @@ public class AjaxDataController {
 				if (type.equals("userPhoto")) {
 					String saveName = "images/portrait/" + currentUser.getId() + "_" + Calendar.getInstance().getTimeInMillis() + fileType;
 					String savePath = request.getServletContext().getRealPath("") + "/" + saveName;
-					
 					if (!currentUser.getPhoto().equals("images/portrait/default.png")) {
 						// delete the old portrait
-						if (new File(request.getServletContext().getRealPath("")+ "/" +currentUser.getPhoto()).delete()) {
-							// save the new portrait
-							try {
-								uploadFile.transferTo(new File(savePath));
-								// update user portrait info
-								currentUser.setPhoto(saveName);
-								uService.updateUser(currentUser);
-								result.put("isGood", true);
-								result.put("newUserPhoto", currentUser.getPhoto());
-							} catch (IOException e) {
-								System.out.println("fail to save file");
-								result.put("isGood", false);
-								e.printStackTrace();
-							}
-						}
-						else
+						if (!new File(request.getServletContext().getRealPath("")+ "/" +currentUser.getPhoto()).delete()) {
 							result.put("isGood", false);
+							return result;
+						}
+					}
+					// save the new portrait
+					try {
+						uploadFile.transferTo(new File(savePath));
+						// update user portrait info
+						currentUser.setPhoto(saveName);
+						uService.updateUser(currentUser);
+						result.put("isGood", true);
+						result.put("newUserPhoto", currentUser.getPhoto());
+					} catch (IOException e) {
+						System.out.println("fail to save file");
+						result.put("isGood", false);
+						e.printStackTrace();
 					}
 				}
 			}
